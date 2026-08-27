@@ -1,0 +1,16 @@
+# secrets, never commit these
+.env
+KEYS_REMOVED.txt
+*_key*.txt
+
+# caches from the collection scripts, large and rebuildable
+*.json
+!package.json
+peek_pages/
+__pycache__/
+*.pyc
+
+# working copies and scratch
+*.tmp
+*.bak
+~$*

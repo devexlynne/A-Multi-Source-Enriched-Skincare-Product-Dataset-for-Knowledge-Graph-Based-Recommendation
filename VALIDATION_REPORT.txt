@@ -1,0 +1,99 @@
+==============================================================================
+  VALIDATING COMBINED_DATASET.csv
+  2026-08-27 23:19
+==============================================================================
+
+A. CAN THE FILE BE READ AT ALL
+  PASS  the whole file is valid UTF-8                             
+  PASS  no control characters anywhere                            0 found
+  PASS  every row has the same number of columns                  69 columns, 13,184 rows
+  PASS  no column name is repeated                                
+        13,184 products, 69 columns, 32,643,473 bytes
+
+B. IS EVERY ROW A ROW, AND EVERY PRODUCT ONE PRODUCT
+  PASS  product ids are unique                                    0 repeated
+  PASS  product ids are correctly formed                          0 malformed
+  PASS  every product has a brand and a name                      0 missing
+  PASS  no two rows are the same brand and product name           0 repeated pairs
+  PASS  no stray spaces at the ends of brand or name              0 rows
+
+C. DO THE CONTROLLED COLUMNS HOLD ONLY THEIR ALLOWED VALUES
+  PASS  source_category                                           0 unexpected
+  PASS  skin_type                                                 0 unexpected
+  PASS  sensitivity                                               0 unexpected
+  PASS  skin_type_tier                                            0 unexpected
+  PASS  src_global                                                0 unexpected
+  PASS  src_lb_retail                                             0 unexpected
+  PASS  src_lb_origin                                             0 unexpected
+  PASS  source_count                                              0 unexpected
+  PASS  match_method                                              0 unexpected
+  PASS  concerns (each piece)                                     0 unexpected
+  PASS  benefits (each piece)                                     0 unexpected
+  PASS  review_source (each piece)                                0 unexpected
+  PASS  certifications (each piece)                               0 unexpected
+
+D. ARE THE NUMBERS INSIDE SENSIBLE LIMITS
+  PASS  rating between 0 and 5                                    0 outside
+  PASS  price_usd between 0.01 and 5000                           0 outside
+  PASS  price_usd_min between 0.01 and 5000                       0 outside
+  PASS  price_usd_max between 0.01 and 5000                       0 outside
+  PASS  price_usd_market between 0.01 and 5000                    0 outside
+  PASS  rating_market between 0 and 5                             0 outside
+  PASS  review_count between 0 and 10000000                       0 outside
+  PASS  rating_market_count between 0 and 100000000               0 outside
+  PASS  ingredient_count between 1 and 300                        0 outside
+  PASS  spf between 0 and 110                                     0 outside
+
+E. DO FIELDS THAT DEPEND ON EACH OTHER AGREE
+  PASS  sensitivity is filled wherever skin type is               0 rows
+  PASS  lowest price <= price <= highest price                    0 rows
+  PASS  ingredient count matches the list                         0 rows
+  PASS  free from only where the formula is complete              0 rows
+  PASS  key ingredients only where there is a formula             0 rows
+  PASS  source markers add up to the source count                 0 rows
+  PASS  category agrees with the markers it came from             0 rows
+  PASS  review text always names its source                       0 rows
+  PASS  a rating names where it came from                         0 rows
+
+F. DOES EVERY CLAIM SAY WHERE IT CAME FROM
+  PASS  every skin type names a source                            0 rows
+  PASS  every skin type says how strong that source is            0 rows
+  PASS  every formula names a source                              0 rows
+  PASS  every market price carries the day it was collected       0 rows
+  PASS  every market price names the seller                       0 rows
+  PASS  every image address is https, so it will not be blocked   0 rows
+  PASS  no image is a logo or a placeholder                       0 rows
+  PASS  no price came from a secondhand marketplace               0 rows
+  PASS  source addresses look like addresses                      0 rows
+
+G. IS ANYTHING LEFT THAT MEANS "WE DO NOT KNOW"
+  PASS  no cell says "we do not know" in words                    0 cells
+  PASS  stored review text is readable back                       0 rows
+
+COVERAGE, FOR THE RECORD
+    brand              13,184  100.0%
+    name               13,184  100.0%
+    category           13,184  100.0%
+    concerns            9,681   73.4%
+    sensitivity        13,184  100.0%
+    skin type          13,184  100.0%
+    description        12,028   91.2%
+    a price            12,185   92.4%
+    ingredients        11,050   83.8%
+    key ingredients    10,398   78.9%
+    free from          10,186   77.3%
+    benefits           12,735   96.6%
+    a rating            6,595   50.0%
+    review text         4,840   36.7%
+
+==============================================================================
+  A  the file can be read                4 of   4 passed
+  B  rows and products                   5 of   5 passed
+  C  controlled values                  13 of  13 passed
+  D  numbers in range                   10 of  10 passed
+  E  fields agree                        9 of   9 passed
+  F  claims carry sources                9 of   9 passed
+  G  nothing pretending to be data       2 of   2 passed
+
+  ALL 52 CHECKS PASSED.
+==============================================================================
