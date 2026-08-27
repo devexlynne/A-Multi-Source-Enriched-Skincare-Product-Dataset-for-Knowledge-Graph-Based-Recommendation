@@ -42,9 +42,7 @@ model is reasonable rather than idiosyncratic.
 | provenance of each claim | not described | tier 1 to 4, every claim sourced |
 | validation | 10 respondents | 87 automated checks |
 
-Their evaluation is with users, which yours does not yet have. That is the
-honest gap to acknowledge, and it is also your obvious next step.
-
+Evaluation with users is our next step.
 ---
 
 ## 2. OntoCosmetic — the cosmetic domain ontology
