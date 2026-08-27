@@ -116,6 +116,8 @@
     <a data-s="en-complete">6c. Skin type at 100%</a>
     <a data-s="en-sources">6d. Who publishes</a>
     <a data-s="en-eu">6e. Linked to the EU register</a>
+    <a data-s="en-eu2">6f. The EU register, worked through</a>
+    <a data-s="en-repo">6g. Packaging it for GitHub</a>
     <div class="grp">ontology</div>
     <a data-s="ont-what">5a. What an ontology is</a>
     <a data-s="ont-reuse">5b. Ontologies to reuse</a>
@@ -3616,6 +3618,122 @@ with CosIng loaded:
   carry the identifiers that ontology already uses. The link between this
   dataset and the ontology phase is no longer something to design later. It
   exists in the file.</p>
+</section>
+
+
+<section class="section" id="en-eu2">
+  <h2>Checking ingredients against the EU register</h2>
+  <p class="lead">Every ingredient in the dataset is now looked up in CosIng,
+  the list the European Commission keeps of what may go into a cosmetic sold
+  in Europe. 10,876 of the 11,050 products that have an ingredient
+  list were found in it, 98.4%.</p>
+
+  <h3>The problem this solves</h3>
+  <p>The dataset says some products may worsen dryness. That came from a rule
+  written for this project: if the formula contains alcohol denat, flag it.
+  The rule is sensible, but if somebody asks <em>who says so</em>, the honest
+  answer was: I do.</p>
+  <p>CosIng changes the answer. It is the Commission's own register, kept
+  under Regulation (EC) 1223/2009, and it records what each ingredient is
+  officially recognised to do. Now the flag can point at the regulator.</p>
+
+  <h3>One product, all the way through</h3>
+  <p>This is a real row in the dataset, not an invented example.</p>
+
+  <table><thead><tr><th>field</th><th>value</th></tr></thead><tbody><tr><td>product_id</td><td><code>LBR-00011</code></td></tr><tr><td>brand</td><td>Eucerin</td></tr><tr><td>name</td><td>Sensitive Protect Dry Touch Sun Gel-Cream Extra Light SPF50+</td></tr><tr><td>where it is sold</td><td>Lebanese retail</td></tr><tr><td>concerns flagged</td><td>May Worsen Eczema<br>May Worsen Rosacea<br>May Trigger Acne<br>May Worsen Dryness<br>May Worsen Irritation<br>May Worsen Oily Skin</td></tr></tbody></table>
+
+  <p>The formula begins:</p>
+  <div class="note"><code>AQUA, HOMOSALATE, ALCOHOL DENAT., BUTYL METHOXYDIBENZOYLMETHANE, BIS-ETHYLHEXYLOXYPHENOL METHOXYPHENYL TRIAZINE, ETHYLHEXYL SALICYLATE, ETHY...</code></div>
+
+  <p>Three of those ingredients, looked up in the register:</p>
+
+  <table><thead><tr><th>ingredient</th><th>CosIng ref</th><th>CAS</th><th>what the EU says it does</th><th>restricted</th></tr></thead><tbody><tr><td>ALCOHOL DENAT.</td><td>74174</td><td>none listed</td><td>Antifoaming, Antimicrobial, <b>Astringent</b>, Fragrance, Solvent, Viscosity controlling</td><td>no</td></tr><tr><td>HOMOSALATE</td><td>34299</td><td>118-56-9</td><td>Fragrance, UV absorber, UV filter</td><td>yes, Annex VI entry 3</td></tr><tr><td>BUTYL METHOXYDIBENZOYLMETHANE</td><td>31713</td><td>70356-09-1</td><td>Light stabilizer, UV absorber, UV filter</td><td>yes, Annex VI entry 8</td></tr></tbody></table>
+
+  <h3>What this lets the dataset say now</h3>
+  <p><b>Before.</b> This product may worsen dryness, because a rule in this
+  project flags alcohol denat.</p>
+  <p><b>After.</b> This product contains ALCOHOL DENAT., which the European
+  Commission records as an <b>astringent</b> and a solvent, register entry
+  74174. Astringents dry the skin. That is why the product is flagged, and the
+  source is the Commission rather than the author of the dataset.</p>
+
+  <div class="note">The same row also shows two of its UV filters are
+  restricted under Annex VI, with concentration limits set by the same
+  regulation. That is not a warning about the product. Sunscreen filters are
+  restricted by design, and a sunscreen containing them is doing its job. It
+  is a column that lets somebody ask the question.</div>
+
+  <h3>How well the matching worked</h3>
+  <table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>products with an ingredient list</td><td>11,050</td></tr><tr><td>found in the register</td><td>10,876 (98.4%)</td></tr><tr><td>median share of a formula found</td><td>99%</td></tr><tr><td>formulas matched at 90% or better</td><td>8,730 of 10,876</td></tr><tr><td>products whose concerns can now cite an EU function</td><td>9,617</td></tr><tr><td>products containing a restricted ingredient</td><td>9,321</td></tr></tbody></table>
+
+  <h3>Two details worth knowing</h3>
+  <p><b>The matching is exact, on purpose.</b> Names are compared after
+  lowercasing and removing brackets, because a shop writes Aqua (Water) where
+  the register says AQUA. Nothing fuzzy is allowed anywhere near it. A near
+  miss on a chemical name is a different chemical, and a wrong ingredient
+  would quietly produce a wrong safety claim.</p>
+  <p><b>The file needed handling before it could be read.</b> The Commission
+  ships the register with seven lines of notes above the real column headings,
+  so opening it normally gives a table whose only column is called "File
+  creation date". The script looks for the line that names INCI and starts
+  there. Worth saying because it is the kind of thing that silently produces
+  an empty result and looks like the data is missing.</p>
+
+  <h3>Why this matters for the next phase</h3>
+  <p>CosIng is the source that CosIng-KG, an existing published ontology, is
+  built from. Because the ingredients here now carry the register's own
+  identifiers, the link between this dataset and that ontology already exists
+  in the file. It is not something still to be designed.</p>
+</section>
+
+<section class="section" id="en-repo">
+  <h2>Packaging it for GitHub</h2>
+  <p class="lead">The dataset now lives in a repository my supervisors can
+  read, run and manage. Getting it there needed four changes, and one of them
+  was urgent.</p>
+
+  <h3>1. The API keys had to come out first</h3>
+  <p>22 keys were written in plain text across 15 scripts: Serper, Talordata,
+  ScraperAPI, Rayobyte. On one laptop that is untidy. In a public repository
+  it is a live problem, because automated scanners read new public commits
+  within minutes of a push and use whatever they find until the quota is
+  gone.</p>
+  <div class="bad">Deleting a key in a later commit does not remove it. Git
+  keeps history, so the key stays readable in the earlier commit for as long
+  as the repository exists. This is why the keys came out <em>before</em> the
+  first commit rather than after it.</div>
+  <p>Every script now reads its keys from the environment instead. They still
+  run; the secret is simply no longer in the file. The keys are being
+  regenerated at the providers regardless, because anything that has sat in a
+  shared folder should be treated as known to somebody else.</p>
+
+  <h3>2. Only part of the folder belongs in a repository</h3>
+  <p>The working folder is 861 MB: raw scrapes, twenty superseded drafts, zip
+  archives. One file alone, the matched Amazon reviews, is 157 MB, and GitHub
+  refuses anything over 100 MB. Pushing the folder would simply have
+  failed.</p>
+  <p>So the repository holds 122 files and 38 MB: the dataset, the evidence
+  file, the validation reports, the portal, and 117 scripts. Nothing
+  that cannot be rebuilt from those.</p>
+
+  <h3>3. Every number in the portal was re-checked</h3>
+  <p>The portal was written page by page over several weeks, and pages that
+  are not rebuilt keep the figures they were born with. Four places still said
+  13,384 products, the count before the Lebanese origin reclassification
+  removed duplicates. The home page still announced <em>0% skin type, being
+  rebuilt</em>, which was true the day that work started and is now the
+  opposite of the truth.</p>
+  <div class="note">A reader who sees two different totals on two pages does
+  not conclude that one is out of date. They conclude that neither can be
+  relied on, and they are right to. Every figure is now read from the live
+  files when the page is built, so a page cannot drift from the data
+  again.</div>
+
+  <h3>4. What is in the repository</h3>
+  <table><thead><tr><th>file</th><th>what it is</th></tr></thead><tbody><tr><td><code>SKINCARE_FINAL.csv</code></td><td>the dataset. 13,184 rows, 42 columns</td></tr><tr><td><code>COMBINED_EVIDENCE.csv</code></td><td>the columns trimmed out of the main file to keep it readable: the quoted sentences, the source pages, the tier columns. Joins on product_id. Nothing was deleted, only moved</td></tr><tr><td><code>VALIDATION_REPORT.txt</code></td><td>the 87 checks and what each found</td></tr><tr><td><code>portal.html</code></td><td>this walkthrough</td></tr><tr><td><code>ONTOLOGIES_TO_REUSE.md</code></td><td>existing ontologies worth reusing, and how each column maps onto standard vocabulary</td></tr><tr><td><code>scripts/</code></td><td>117 Python files. Most explain in their opening comment why they exist and what went wrong before they worked</td></tr></tbody></table>
+
+  <p>The repository is private, and my supervisors have access to manage
+  it.</p>
 </section>
 
 </main></div>
