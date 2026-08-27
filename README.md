@@ -109,8 +109,10 @@ and what each one found. 52 on the working file, 35 on the final one.
 where every part of the dataset came from, what went wrong along the way, and how
 each problem was fixed. This is the fullest explanation of the work.
 
-**ONTOLOGIES_TO_REUSE.md** covers existing ontologies worth reusing in the next
-phase, and how each of the 42 columns maps onto standard vocabulary.
+**ONTOLOGY_REUSE.md** is the plan for the ontology phase: which four
+vocabularies to reuse, download links for each, what their classes and
+properties mean in plain terms, how all 42 columns map onto them, and an
+honest list of what to skip and why.
 
 **RUNBOOK.md** gives the order to run things in if you want to rebuild or extend
 the dataset.
