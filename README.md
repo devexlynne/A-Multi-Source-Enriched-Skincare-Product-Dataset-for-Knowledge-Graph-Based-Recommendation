@@ -114,6 +114,11 @@ vocabularies to reuse, download links for each, what their classes and
 properties mean in plain terms, how all 42 columns map onto them, and an
 honest list of what to skip and why.
 
+**WHY_REUSE_VOCABULARY.md** is the short answer to "says who?" It gives the
+four sources behind the decision to reuse standard vocabulary rather than
+invent new terms, and flags which part of that argument was opinion rather
+than citation.
+
 **RUNBOOK.md** gives the order to run things in if you want to rebuild or extend
 the dataset.
 

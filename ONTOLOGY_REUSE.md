@@ -11,6 +11,13 @@ The test I applied to every candidate was the one that matters: *if I can do
 this by hand in an afternoon, it is not worth importing an ontology for.* Six
 of the eight candidates in the report fail that test for this thesis.
 
+The opposite rule also holds, and it is the one with citations behind it:
+where a standard term already exists, use it rather than minting your own.
+That is W3C Data on the Web Best Practices, Best Practice 15, and FAIR
+principle I2, and inventing a duplicate term is catalogued as pitfall P34 by
+the OOPS! ontology checker. `WHY_REUSE_VOCABULARY.md` gives the full
+references.
+
 ---
 
 ## Use these four
