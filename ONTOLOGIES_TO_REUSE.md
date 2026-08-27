@@ -10,13 +10,13 @@ people's work later.
 
 ---
 
-## 1. The closest published work to your thesis
+## 1. The closest published work
 
 **Personalized Skincare Recommendation System Based on Ontology and User
 Preferences** (2025)
 
 This one matters more than any other item on this page, because **it scraped
-Skinsort, the same source you did.**
+Skinsort, the same source we did.**
 
 - twelve core classes: Product, Ingredient, Skin Type, Skin Concern, and others
 - more than twenty-five object properties
