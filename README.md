@@ -114,6 +114,12 @@ vocabularies to reuse, download links for each, what their classes and
 properties mean in plain terms, how all 42 columns map onto them, and an
 honest list of what to skip and why.
 
+**WHAT_COSING_GIVES_US.md** explains, with worked examples from the data,
+what linking to the EU ingredient register made possible, and what the RDF
+version of it would add on top. It also records the finding that came out of
+the link: 574 products marked safe for sensitive skin contain one of the 26
+EU declarable allergens.
+
 **WHY_REUSE_VOCABULARY.md** is the short answer to "says who?" It gives the
 four sources behind the decision to reuse standard vocabulary rather than
 invent new terms, and flags which part of that argument was opinion rather
