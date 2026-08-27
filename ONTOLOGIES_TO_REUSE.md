@@ -32,7 +32,7 @@ model is reasonable rather than idiosyncratic.
 
 **Where you are stronger, and it is worth saying out loud in the meeting:**
 
-| | that paper | yours |
+| | that paper | ours |
 |---|---|---|
 | products | 3,800 | 13,184 |
 | market | Indonesian | Lebanese |
