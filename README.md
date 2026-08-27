@@ -114,6 +114,10 @@ vocabularies to reuse, download links for each, what their classes and
 properties mean in plain terms, how all 42 columns map onto them, and an
 honest list of what to skip and why.
 
+**THE_FOUR_COSING_COLUMNS.md** is the one to hand somebody who asks what the
+EU register added. It explains the four new columns and walks a single real
+product, a Revox B77 niacinamide serum sold in Beirut, through all four.
+
 **WHAT_COSING_GIVES_US.md** explains, with worked examples from the data,
 what linking to the EU ingredient register made possible, and what the RDF
 version of it would add on top. It also records the finding that came out of
