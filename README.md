@@ -1,119 +1,168 @@
-# A skincare dataset for Lebanon
+# Skincare products in Lebanon
 
-13,184 products, 42 columns, and a record of where every claim came from.
+A dataset of 13,184 skincare products, built for my MSc thesis on
+ontology-based skincare recommendation.
 
-I started this because the recommendation papers I could find assume a market
-where you can buy anything. Lebanon is not that market. A product can suit your skin
-perfectly and simply not be sold here, or cost three different amounts in
-three Beirut shops, or be priced in dollars when you're paid in lira. So the
-dataset tracks what a product is *and* whether you can actually get it.
+Most recommendation research assumes you can buy anything. In Lebanon you
+often can't. A product might suit your skin and simply not be sold here, or
+cost different amounts in different Beirut shops, or be priced in dollars when
+you're paid in lira. So this dataset records what a product is *and* whether
+you can actually get it.
 
-## What's in it
+## The numbers
 
-Three sources, kept separate rather than blended together:
-
-| | products |
+| | |
 |---|---|
-| Global (Skinsort) | 6,350 |
+| products | 13,184 |
+| brands | 1,475 |
+| product types | 22 |
+| columns | 42 |
+| automated checks, all passing | 87 |
+
+Where the products come from:
+
+| | |
+|---|---|
+| Global, from Skinsort | 6,350 |
 | Lebanese retail, sold by shops here | 5,914 |
 | Lebanese origin, made here | 920 |
 
-Coverage runs from 100% on brand, name, product type, country, skin type and
-sensitivity, through 99.5% on images and 96.6% on benefits, down to 83.8% on
-ingredients and 50% on ratings. 87 automated checks pass on every build.
+How full each column is:
 
-## The bit I'd actually point at
+| | |
+|---|---|
+| brand, name, type, country | 100% |
+| skin type, sensitivity | 100% |
+| product link | 99.7% |
+| product image | 99.5% |
+| benefits | 96.6% |
+| price, and price in lira | 92.4% |
+| short description | 91.2% |
+| concerns | 83.9% |
+| ingredients | 83.8% |
+| EU ingredient functions | 82.5% |
+| rating | 50.0% |
 
-Every claim carries its source and how strong that source is. Skin type is
-graded 1 to 4:
+A few things the data says. The median price is $22, ranging from $0.10 to
+$540. 6,033 products are sold by at least one Lebanese shop, 375 by more than
+one. 4,782 products are safe for sensitive skin by EU allergen rules, 8,402
+are not.
 
-| tier | | products |
+## What matters most about it
+
+Every claim records where it came from and how much that source is worth.
+Skin type is graded:
+
+| | | |
 |---|---|---|
-| 1 | the manufacturer said so | 4,522 |
-| 2 | a retailer said so | 4,657 |
-| 3 | something weaker said so | 2,068 |
-| 4 | nobody said so, worked out from the formula | 1,937 |
+| tier 1 | the manufacturer said so | 4,522 |
+| tier 2 | a retailer said so | 4,657 |
+| tier 3 | a weaker source said so | 2,068 |
+| tier 4 | nobody said so, worked out from the ingredients | 1,937 |
 
-So the column reads 100%, but only **85.3% of it is stated by a source**. The
-rest is inferred and labelled as such. `WHERE skin_type_tier IN (1,2,3)` gets
-you just the stated ones.
+The column is 100% full, but only **85.3% of it comes from a source that
+stated it**. The rest is inferred and marked as such, so it can be excluded
+with `skin_type_tier IN (1,2,3)`.
 
-That split is the whole point. A full column you can't audit is worth less
-than a patchy one you can. 10,620 products also store the exact sentence the
-claim was read from, and 11,794 store the page it was read on.
+A full column you can't check is worth less than a patchy one you can. 10,620
+products also store the exact sentence the claim was read from, and 11,794
+store the page it was read on.
 
-## Ingredients are linked to the EU register
+Ingredients are matched against CosIng, the European Commission's official
+inventory under Regulation (EC) 1223/2009. 10,876 of the 11,050 products with
+an ingredient list matched, 98.4%. That means a concern like "may worsen
+dryness" can name the ingredient and cite the EU register rather than a rule I
+invented.
 
-Every formula is matched against CosIng, the European Commission's inventory
-under Regulation (EC) 1223/2009. 10,876 of the 11,050 products with an
-ingredient list matched, 98.4%.
+## Three things I didn't expect
 
-This is what lets a concern point at a regulator instead of at a rule I wrote.
-The dataset doesn't just say a product may worsen dryness; it can name the
-ingredient, give the function the Commission recognises for it, and link the
-register entry.
+**The divide is between manufacturers and retailers, not Lebanon and the rest
+of the world.** Brands publish ingredient lists and reviews. The shops
+reselling them often don't. About half of Lebanese retail listings carry no
+ingredient declaration, even though EU law makes it the manufacturer's
+responsibility.
 
-## Things I didn't expect
+**Big brands are the hard ones.** Of 316 brand websites asked for a sitemap,
+Dior, Clinique, Estée Lauder, La Mer, Kiehl's, Lancôme, LUSH, Benefit and Dove
+returned nothing. Beesline gave 523 products, Khan El Kaser 1,100, Dermedic
+638, Babaria 1,861. The companies with the most resources to publish product
+data are the ones blocking access to it.
 
-The interesting split isn't Lebanese against global, it's **manufacturers
-against retailers**. Brands publish ingredient lists and reviews. The shops
-reselling those brands mostly do not. Roughly half of Lebanese retail listings
-carry no ingredient declaration, even though Article 19 of the same regulation
-makes it the manufacturer's job. The gap is in the listing, not the product.
+**Beirut shops charge the same.** Of the 375 products sold in more than one
+shop, the median difference between cheapest and dearest is 0.0%. No arbitrage
+story, and I'd rather say that than imply one.
 
-I also assumed big brands would be the easy ones to collect from. The opposite.
-Of 316 brand sites asked for a sitemap, Dior, Clinique, Estée Lauder, La Mer,
-Kiehl's, Lancôme, LUSH, Benefit and Dove all returned nothing. Beesline gave
-523 products, Khan El Kaser 1,100, Dermedic 638, Babaria 1,861. The companies
-best resourced to publish structured product data are the ones withholding it.
+## What's in this repository
 
-And a null result worth stating: Beirut shops price identically. Only 375
-products are sold by more than one Lebanese shop, and the median difference
-between cheapest and dearest is 0.0%. No arbitrage story here, and I'd rather
-say so than imply one.
+**SKINCARE_FINAL.csv** is the dataset. 13,184 rows, 42 columns. This is the one
+to open.
 
-## Files
+**COMBINED_EVIDENCE.csv** holds the working columns that were trimmed out of the
+main file to keep it readable: the quoted sentences, the source URLs, the tier
+columns, and the merge bookkeeping. Joins to the dataset on `product_id`.
+Nothing was deleted, only moved.
 
-`SKINCARE_FINAL.csv` is the dataset. `COMBINED_EVIDENCE.csv` holds everything
-trimmed out of it, the quotes, source URLs and tier columns, joined on `product_id`.
-Nothing was thrown away to make the main file readable, it was moved.
-`VALIDATION_REPORT.txt` lists the 87 checks and what each one found.
+**VALIDATION_REPORT.txt** and **VALIDATION_REPORT_FINAL.txt** list the 87 checks
+and what each one found. 52 on the working file, 35 on the final one.
+
+**portal.html** is worth opening in a browser. Fifty pages walking through
+where every part of the dataset came from, what went wrong along the way, and how
+each problem was fixed. This is the fullest explanation of the work.
+
+**ONTOLOGIES_TO_REUSE.md** covers existing ontologies worth reusing in the next
+phase, and how each of the 42 columns maps onto standard vocabulary.
+
+**RUNBOOK.md** gives the order to run things in if you want to rebuild or extend
+the dataset.
+
+**scripts/** has 111 Python files. The ones that matter:
+
+| | |
+|---|---|
+| `build_final_dataset.py` | turns the working file into SKINCARE_FINAL.csv |
+| `validate_dataset.py` | runs the 87 checks |
+| `merge_all_sources.py` | combines the three sources into one |
+| `link_cosing.py` | matches ingredients to the EU register |
+| `fetch_product_images.py` | reads product images from shop pages |
+| `fill_skin_type_from_formula.py` | the tier 4 inference |
+| `resolve_skin_type_conflicts.py` | settles disagreements between shops |
+
+Most scripts explain in their opening comment why they exist and what went
+wrong before they worked. Several were rewritten two or three times.
 
 ## Running it
 
-```bash
+```
 cd scripts
-py build_final_dataset.py       # rebuild the tidy file
-py validate_dataset.py          # 52 checks on the working file
-py validate_dataset.py --final  # 35 on the tidy one
+py build_final_dataset.py
+py validate_dataset.py
+py validate_dataset.py --final
 ```
 
-The scripts expect `COMBINED_DATASET.csv` beside them. That is the working
-file, 30 MB of intermediate columns, and it is not in this repository:
-`SKINCARE_FINAL.csv` and `COMBINED_EVIDENCE.csv` together hold everything it
-contains.
+Both validators should end with all checks passed.
 
-Collection scripts need API keys from the environment: `set SERPER_KEYS=k1,k2`,
-or a line `SERPER_KEYS=k1,k2` in a `.env` file, which git ignores.
+The collection scripts need API keys, read from the environment rather than
+written in the code:
+
+```
+set SERPER_KEYS=key1,key2
+```
 
 ## What it isn't
 
-A snapshot, not a feed. Prices move and Lebanese prices move fast;
-`price_seen_date` says when each was true.
+A snapshot, not a live feed. Prices move, and Lebanese prices move quickly.
+`price_seen_date` records when each one was true.
 
-Ratings sit at 50% and no amount of effort fixes that. 5,623 Lebanese shop
-pages were read in full and carried no review data at all, because those shops
-run Shopify without a review app. The brand sites do publish reviews and those
-are in here.
+Ratings sit at 50% and more effort won't fix it. 5,623 Lebanese shop pages
+were read in full and carried no review data at all, because those shops run
+Shopify without a review app installed. The brand sites do publish reviews and
+those are included.
 
-And nobody has hand-checked a random sample yet. The 87 checks prove the file
-is internally consistent, which isn't the same as proving it's right. That's
-what I want to do next, and the provenance columns exist so it's possible.
+Nobody has hand-checked a random sample yet. The 87 checks prove the file is
+internally consistent, which is not the same as proving it's correct. That's
+the next thing to do, and the provenance columns exist so that it can be.
 
 ## Licence
 
 Code is MIT. The data is publicly published product information collected for
 academic research. See LICENSE before redistributing it.
-
-Part of an MSc thesis on ontology-based skincare recommendation for the
-Lebanese market.
