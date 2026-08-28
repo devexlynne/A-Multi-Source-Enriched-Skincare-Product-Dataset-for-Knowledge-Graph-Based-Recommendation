@@ -128,6 +128,12 @@ version of it would add on top. It also records the finding that came out of
 the link: 574 products marked safe for sensitive skin contain one of the 26
 EU declarable allergens.
 
+**SUPPORTING_VOCABULARIES.md** answers the question I kept getting stuck on:
+what do SKOS, PROV-O and the rest actually give me that I cannot do by hand? It
+goes through each one with examples from my own data, including the Cetaphil
+lotion that two Beirut shops price at $8.66 and $32.36, and it says plainly
+which two I am skipping and why.
+
 **WHY_REUSE_VOCABULARY.md** is the short answer to "says who?" It gives the
 four sources behind the decision to reuse standard vocabulary rather than
 invent new terms, and flags which part of that argument was opinion rather
