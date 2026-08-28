@@ -114,6 +114,10 @@ vocabularies to reuse, download links for each, what their classes and
 properties mean in plain terms, how all 42 columns map onto them, and an
 honest list of what to skip and why.
 
+**GLOSSARY.md** defines the terms that come up everywhere else: EU, INCI,
+CosIng, CAS number, restricted, annex, tier, ontology. Start here if any of
+those are unfamiliar.
+
 **THE_FOUR_COSING_COLUMNS.md** is the one to hand somebody who asks what the
 EU register added. It explains the four new columns and walks a single real
 product, a Revox B77 niacinamide serum sold in Beirut, through all four.
