@@ -11,15 +11,10 @@ you can actually get it.
 
 ## The numbers
 
-| | |
-|---|---|
-| products | 13,184 |
-| brands | 1,475 |
-| product types | 22 |
-| columns | 42 |
-| automated checks, all passing | 87 |
+**13,184 products. 1,475 brands. 22 product types. 42 columns. 87 automated
+checks, all passing.**
 
-Where the products come from:
+Three sources, kept separate:
 
 | | |
 |---|---|
@@ -31,22 +26,26 @@ How full each column is:
 
 | | |
 |---|---|
-| brand, name, type, country | 100% |
-| skin type, sensitivity | 100% |
-| product link | 99.7% |
-| product image | 99.5% |
+| brand, name, type, country, skin type, sensitivity | 100% |
+| product link, image | 99.7%, 99.5% |
 | benefits | 96.6% |
 | price, and price in lira | 92.4% |
 | short description | 91.2% |
-| concerns | 83.9% |
-| ingredients | 83.8% |
+| concerns, ingredients | 83.9%, 83.8% |
 | EU ingredient functions | 82.5% |
 | rating | 50.0% |
 
-A few things the data says. The median price is $22, ranging from $0.10 to
-$540. 6,033 products are sold by at least one Lebanese shop, 375 by more than
-one. 4,782 products are safe for sensitive skin by EU allergen rules, 8,402
-are not.
+What the data says:
+
+| | |
+|---|---|
+| median price | $22, from $0.10 to $540 |
+| sold by at least one Lebanese shop | 6,033 |
+| sold by more than one | 375 |
+| safe for sensitive skin by EU allergen rules | 4,782 |
+| formulas matched to the EU ingredient register | 10,876 of 11,050, 98.4% |
+| every ingredient identified, no gaps | 5,424 |
+| contain an ingredient the EU restricts | 9,321 |
 
 ## What matters most about it
 
@@ -73,6 +72,11 @@ inventory under Regulation (EC) 1223/2009. 10,876 of the 11,050 products with
 an ingredient list matched, 98.4%. That means a concern like "may worsen
 dryness" can name the ingredient and cite the EU register rather than a rule I
 invented.
+
+That link also turned up something I was not looking for: **574 products
+marked safe for sensitive skin contain one of the 26 fragrance allergens the
+EU requires to be declared by name.** 224 of those claims came from the
+manufacturer. The dataset records both rather than overruling either.
 
 ## Three things I didn't expect
 

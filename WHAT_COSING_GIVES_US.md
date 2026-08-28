@@ -120,11 +120,14 @@ Which allergen:
 
 | | |
 |---|---|
-| benzyl alcohol | 174 |
-| limonene | 134 |
-| linalool | 101 |
-| hexyl cinnamal | 28 |
-| alpha-isomethyl ionone | 27 |
+| linalool | 303 |
+| limonene | 291 |
+| benzyl alcohol | 196 |
+| citronellol | 136 |
+| geraniol | 108 |
+| hexyl cinnamal | 75 |
+
+These add up to more than 574 because a product can contain several.
 
 And where the "sensitive" claim came from:
 
