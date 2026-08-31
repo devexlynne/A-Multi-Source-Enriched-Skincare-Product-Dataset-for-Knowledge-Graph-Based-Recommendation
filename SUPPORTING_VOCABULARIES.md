@@ -2,7 +2,7 @@
 
 I kept reading advice to reuse SKOS, PROV-O, ChEBI and the Product Types
 Ontology, and for a long time I did not understand what any of them would
-actually do for me. My columns are already clean. My tier system already
+actually do for me. My columns are already clean. My level system already
 works. Nothing was broken. So what was I supposed to be gaining?
 
 This page is the answer I eventually arrived at, written the way I wish it had
@@ -33,7 +33,7 @@ and only three:
    to know Night Moisturizer is a kind of Moisturizer. That is a statement I
    have to store somewhere, and there is already a standard way to store it.
 3. **Somebody asks whether I made it up.** "I used the W3C provenance
-   standard" and "I invented a tier column" are different sentences in a viva,
+   standard" and "I invented a level column" are different sentences in a viva,
    even when the underlying data is identical.
 
 If none of those three apply, the vocabulary is overhead. I say so below where
@@ -93,7 +93,7 @@ row.
 
 ---
 
-## PROV-O, for the tier system
+## PROV-O, for the level system
 
 <https://www.w3.org/TR/prov-o/>
 Turtle file: <https://www.w3.org/ns/prov.ttl>
@@ -102,13 +102,13 @@ This is the one I care about most, because it is attached to the part of the
 dataset I am proudest of.
 
 **What I have.** Every claim in this dataset records where it came from and
-how much that source is worth. Skin type is graded tier 1 to 4. There are four
+how much that source is worth. Skin type is graded level 1 to 4. There are four
 separate `*_source` columns, and 13,184 of them are filled for skin type
 alone, across 1,277 distinct sources.
 
 **The problem.** `skin_type_tier = 1` means something specific to me and
 nothing at all to anybody else. It is a private convention. If a second
-researcher merges this dataset with theirs, my tier column is a number in a
+researcher merges this dataset with theirs, my level column is a number in a
 spreadsheet that they have to read my documentation to decode.
 
 **What PROV-O changes.** Three properties do nearly all of the work:
@@ -120,7 +120,7 @@ spreadsheet that they have to read my documentation to decode.
 | `prov:generatedAtTime` | this was true on this date |
 
 Here is a real row from my data. `LBR-00033`, Cetaphil Gentle Exfoliating
-Salicylic Acid Moisturizing Lotion. Skin type Dry, sensitivity Sensitive, tier
+Salicylic Acid Moisturizing Lotion. Skin type Dry, sensitivity Sensitive, level
 1, authority `manufacturer`, read from `www.cetaphil.com`, and the exact page
 URL is stored alongside it.
 
@@ -139,7 +139,7 @@ files. What changed is that the sentence "the manufacturer said so" is now
 written in a form any provenance-aware tool understands without being taught
 my conventions.
 
-**Why not do it manually.** I could keep the tier number and write a paragraph
+**Why not do it manually.** I could keep the level number and write a paragraph
 explaining it, and honestly for my own thesis that would work. The reason I am
 not is that provenance is the one thing that makes this dataset unusual. Most
 product datasets state a skin type and expect you to believe it. Mine records
@@ -238,7 +238,7 @@ Arabic labels, which is the entire benefit I would have wanted from it.
 |---|---|---|
 | CosIng | done already | 98.4% of formulas matched |
 | schema.org | yes | products, offers, prices, ratings |
-| PROV-O | yes | the tier system, expressed as a standard |
+| PROV-O | yes | the level system, expressed as a standard |
 | SKOS | yes | five closed lists, plus Arabic labels and hierarchy |
 | ChEBI | no | CosIng covers what a recommender needs |
 | Product Types Ontology | no | my own 22 types are better for this domain |

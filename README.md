@@ -20,7 +20,7 @@ Three sources, kept separate, plus the products that appear in two of them:
 | Global, from Skinsort | 6,294 |
 | Lebanese retail, sold by shops here | 5,014 |
 | Lebanese origin, made here | 802 |
-| Both — in the global catalogue *and* sold here | 519 |
+| Both, in the global catalogue *and* sold here | 519 |
 
 That last row is the one worth knowing about. Those 519 products carry an
 international listing and a Lebanese price on the same line, so they are the
@@ -36,10 +36,10 @@ How full each column is:
 | product link, image | 99.8%, 99.5% |
 | benefits | 96.8% |
 | price, and price in lira | 92.6% |
-| ingredients | 92.2% |
-| EU ingredient functions | 91.5% |
+| ingredients | 93.5% |
+| EU ingredient functions | 92.7% |
 | short description | 91.8% |
-| concerns | 84.5% |
+| concerns | 93.5% |
 | size | 27.4% |
 | rating | 51.4% |
 
@@ -50,11 +50,11 @@ What the data says:
 | median price | $22, from $0.10 to $540 |
 | sold by at least one Lebanese shop | 11,937 |
 | sold by more than one | 356 |
-| formulas matched to the EU ingredient register | 11,550 of 11,645, 99.2% |
-| ingredient mentions found in the register | 282,490 of 292,419, 96.6% |
-| every ingredient identified, no gaps | 8,931 |
-| contain an ingredient the EU restricts | 9,487 |
-| declare none of the 26 EU fragrance allergens | 9,422 |
+| formulas matched to the EU ingredient register | 11,704 of 11,802, 99.2% |
+| ingredient mentions found in the register | 285,917 of 295,991, 96.6% |
+| every ingredient identified, no gaps | 9,032 |
+| contain an ingredient the EU restricts | 9,613 |
+| declare none of the 26 EU fragrance allergens | 9,537 |
 
 ## What matters most about it
 
@@ -63,10 +63,10 @@ Skin type is graded:
 
 | | | |
 |---|---|---|
-| tier 1 | the manufacturer said so | 4,460 |
-| tier 2 | a retailer said so | 4,539 |
-| tier 3 | a weaker source said so | 1,954 |
-| tier 4 | nobody said so, worked out from the ingredients | 1,676 |
+| level 1 | the manufacturer said so | 4,460 |
+| level 2 | a retailer said so | 4,539 |
+| level 3 | a weaker source said so | 1,954 |
+| level 4 | nobody said so, worked out from the ingredients | 1,676 |
 
 The column is 100% full, but only **86.7% of it comes from a source that
 stated it**. The rest is inferred and marked as such, so it can be excluded
@@ -77,13 +77,13 @@ products also store the exact sentence the claim was read from, and 11,404
 store the page it was read on.
 
 Ingredients are matched against CosIng, the European Commission's official
-inventory under Regulation (EC) 1223/2009. 11,550 of the 11,645 products with
+inventory under Regulation (EC) 1223/2009. 11,704 of the 11,802 products with
 an ingredient list matched, 99.2%, and across the whole dataset 96.6% of
-292,419 individual ingredient mentions were found in the register. That means
+295,991 individual ingredient mentions were found in the register. That means
 a concern like "may worsen dryness" can name the ingredient and cite the EU
 register rather than a rule I invented.
 
-That link also turned up something I was not looking for: **587 products
+That link also turned up something I was not looking for: **593 products
 marked suitable for sensitive skin contain one of the 26 fragrance allergens
 the EU requires to be declared by name.** The dataset records both the claim
 and the ingredient rather than overruling either.
@@ -93,7 +93,7 @@ and the ingredient rather than overruling either.
 This was the hard part, and it is worth describing because the per-route rates
 are more useful than the final percentage.
 
-Coverage started at 83.8% and finished at 92.2%. Seven routes did it, and they
+Coverage started at 83.8% and finished at 93.5%. Eight routes did it, and they
 are not interchangeable:
 
 | route | recovered | of | rate |
@@ -105,6 +105,7 @@ are not interchangeable:
 | third-party ingredient database | 169 | 1,761 | 10% |
 | manufacturer sitemaps | 63 | 1,432 | 4% |
 | direct crawl of brand sites | 14 | 1,208 | 1% |
+| read by hand from the manufacturer's page | 219 | 533 | 41% |
 
 Seven different page layouts had to be handled: a specification table, a meta
 description, a block of capitals under a "Composition INCI" heading, running
@@ -117,7 +118,7 @@ Four bugs in my own acceptance rules were rejecting real formulas, and each
 one looked exactly like a brand that doesn't publish:
 
 - the shape test assumed every formula opens with water, so every anhydrous
-  product — sticks, balms, oils, soaps — was thrown away
+  product, meaning sticks, balms, oils and soaps, was thrown away
 - ingredient headings were matched in English only, so `Ingrédients`,
   `Composition` and `Ingredienti` were invisible
 - `inci` matched inside ordinary words like *principal*
@@ -132,15 +133,15 @@ reason is as informative as one that works:
 | borrowing a formula from a similar product | 7 candidates checked by hand, none was the same product |
 | a second ingredient database (SkinCarisma) | returns HTTP 403; working around a refusal isn't a method |
 | two large brand sites (L'Oréal, IDC Institute) | HTTP 403 to any script, so 31 were read by hand instead |
-| a general web retailer as a source (Notino) | matched a Garnier serum to a Bentley fragrance and extracted it cleanly — wrong, and silent |
+| a general web retailer as a source (Notino) | matched a Garnier serum to a Bentley fragrance and extracted it cleanly. Wrong, and silent |
 | `token_set_ratio` for choosing between one brand's products | scores a short category page 100 against a full product name; replaced by token coverage |
 
 The Notino case is the one I'd point at. A wrong formula that passes every
 check is worse than a missing one, because nothing downstream can detect it.
-Every third-party match is therefore tier 3, and I read all 27 recoveries from
+Every third-party match is therefore level 3, and I read all 27 recoveries from
 the database pass by hand: **5 were the wrong product and 4 more were
 doubtful, an error rate between 19% and 33%.** That is what a name-based match
-against someone else's catalogue costs, and it is why the tier column exists.
+against someone else's catalogue costs, and it is why the level column exists.
 
 ## What was removed, and why
 
@@ -150,7 +151,7 @@ group is written to its own file so the exclusion is reproducible:
 | file | rows | what they are |
 |---|---|---|
 | `EXCLUDED_MAKEUP.csv` | 196 | lip gloss, liners, mascara, foundation, nail products |
-| `EXCLUDED_BUNDLE_LISTINGS.csv` | 195 | "BUY 1 GET 1", "30% OFF X + Y" — offers, not products |
+| `EXCLUDED_BUNDLE_LISTINGS.csv` | 195 | "BUY 1 GET 1", "30% OFF X + Y". Offers, not products |
 | `EXCLUDED_NON_SKINCARE.csv` | 80 | shampoo, hair colour, deodorant, aftershave |
 | `EXCLUDED_NON_PRODUCTS.csv` | 59 | face cloths, exfoliating gloves, jade rollers |
 | `EXCLUDED_MULTI_PRODUCT_SETS.csv` | 25 | gift boxes, travel kits, "4 BOTTLES SET" |
@@ -184,12 +185,12 @@ story, and I'd rather say that than imply one.
 to open.
 
 **COMBINED_EVIDENCE.csv** holds the working columns that were trimmed out of the
-main file to keep it readable: the quoted sentences, the source URLs, the tier
+main file to keep it readable: the quoted sentences, the source URLs, the level
 columns, and the merge bookkeeping including how each cross-source match was
 made and at what score. Joins to the dataset on `product_id`. Nothing was
 deleted, only moved.
 
-**EXCLUDED_*.csv** — the five exclusion files described above.
+**EXCLUDED_*.csv** ,  the five exclusion files described above.
 
 **scripts/validate_dataset.py** runs the checks: that the two files describe
 the same products, that `ingredient_count` agrees with the formula, that no
@@ -207,7 +208,7 @@ properties mean in plain terms, how all 42 columns map onto them, and an
 honest list of what to skip and why.
 
 **GLOSSARY.md** defines the terms that come up everywhere else: EU, INCI,
-CosIng, CAS number, restricted, annex, tier, ontology. Start here if any of
+CosIng, CAS number, restricted, annex, level, ontology. Start here if any of
 those are unfamiliar.
 
 **THE_FOUR_COSING_COLUMNS.md** is the one to hand somebody who asks what the
@@ -241,7 +242,7 @@ the dataset.
 | `merge_all_sources.py` | combines the three sources into one |
 | `link_cosing.py` | matches ingredients to the EU register |
 | `fetch_product_images.py` | reads product images from shop pages |
-| `fill_skin_type_from_formula.py` | the tier 4 inference |
+| `fill_skin_type_from_formula.py` | the level 4 inference |
 | `resolve_skin_type_conflicts.py` | settles disagreements between shops |
 
 Most scripts explain in their opening comment why they exist and what went

@@ -175,12 +175,12 @@ rather than a perfume.
 
 ---
 
-## Tier
+## level
 
 This project's own term, not a regulatory one. It records how strong the source
 of a claim is.
 
-| tier | meaning |
+| level | meaning |
 |---|---|
 | 1 | the manufacturer stated it |
 | 2 | a retailer stated it |

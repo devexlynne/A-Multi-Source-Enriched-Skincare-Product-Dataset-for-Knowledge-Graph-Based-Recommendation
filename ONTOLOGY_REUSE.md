@@ -1,294 +1,448 @@
-# Ontologies: what I read, what I am taking, what I am building
+# The ontology phase: what I read, what I am building, and why
 
-Five papers read. Four vocabularies chosen. One structure proposed.
-
----
-
-## 1. The five papers at a glance
-
-| # | Paper | What they built | Tools | What I take |
-|---|---|---|---|---|
-| 1 | **Hansanie & Silva (2024)**, IEEE ICIPRoB | CNN grades acne from a photo, an OWL ontology does the recommending | Protégé, **Pellet**, Owlready2, Tkinter | **Three ontologies merged**, reasoner from day one |
-| 2 | **Personalized Skincare Rec. System (2025)** | Methontology ontology, 3,800 products scraped | Protégé, Methontology | `Formulation`, `ApplicationFrequency`, `SkinConcern` as a class |
-| 3 | **Moe & Aung (2014)**, IJITCS | Two ontologies with a bridge between them | Protégé, Taxonomic CCBR, Ford Fulkerson | **`ContextualFeatures`**: price, place, brand |
-| 4 | **Serna et al. (2021)**, OntoCosmetic | Knowledge base for *designing* emulsions | Protégé | Ingredients typed by **function** |
-| 5 | **Gabriel et al. (2023)**, ESCAPE 33 | Formultools app built on OntoCosmetic | Protégé, mobile app | Split **product** from **ingredient** properties |
-
-Papers 4 and 5 are about formulating products, not recommending them. I cite
-them and borrow their ingredient structure. I do not import their ontology.
+This is my working note for the ontology part of the thesis. I am writing it
+the way I would explain it to myself, because most of these words were new to
+me a few weeks ago.
 
 ---
 
-## 2. Paper 1, Hansanie & Silva (2024)
+## 1. The words, in plain language
 
-### Their system: three layers
+Before anything else, here is the vocabulary. I kept getting lost in it, so
+this table stays at the top.
 
-```mermaid
-graph TB
-    L3["<b>3 · User application</b><br/>UI: age, gender, photo, skin type,<br/>concern, allergies, feedback"]
-    L2["<b>2 · Functional</b><br/>CNN acne engine · Ontology · Recommender"]
-    L1["<b>1 · Data gathering</b><br/>products, ingredients, expert knowledge"]
-    L3 --> L2 --> L1
-```
+| Word | What it actually means | Example from my work |
+|---|---|---|
+| **Ontology** | A structured description of a subject: the things that exist in it, and how they relate. Not a database of rows, a description of *kinds of thing* | "A Product has Ingredients. An Ingredient has a Function. A SkinType can be worsened by an Ingredient." |
+| **Class** | A kind of thing | `Product`, `Ingredient`, `SkinType` |
+| **Individual** (or instance) | One actual member of a class | `Revox B77 Niacinamide Moisturiser` is one individual of the class `Product` |
+| **Object property** | A link between two individuals | `Revox B77` **suitableFor** `OilySkin` |
+| **Data property** | A link from an individual to a plain value like a number or a word | `Revox B77` **hasPrice** `8.83` |
+| **OWL** | Web Ontology Language. The file format ontologies are written in. A `.owl` file is XML text that any ontology tool can open | The OntoCosmetic file I was sent is 235 KB of OWL |
+| **Protégé** | Free desktop software from Stanford for building ontologies. You click to add classes and properties instead of typing XML | Every paper I read used it |
+| **Reasoner** | A program that reads the ontology and works out what follows logically from what you wrote, and tells you if you contradicted yourself | If I say a product suits sensitive skin, and separately that it contains a known irritant that sensitive skin must avoid, a reasoner flags the clash |
+| **Pellet** | One reasoner. Older, widely used, the one Hansanie and Silva used | |
+| **HermiT** | Another reasoner. Newer, usually faster, ships inside Protégé | Either works; I only need one |
+| **Inference** | A fact the reasoner works out that I never typed | I say `AcneCleanser` is a kind of `Cleanser`, and `Cleanser` is a kind of `Product`. The reasoner concludes `AcneCleanser` is a `Product` without me saying it |
+| **Query** | A question asked of the ontology, in the way a search is asked of a database | "give me every product that suits oily skin, costs under 30 dollars, and is sold in Beirut" |
+| **SPARQL** | The standard query language for this kind of data. The equivalent of SQL for spreadsheets and databases | |
+| **Owlready2** | A Python library that lets me open an OWL file and work with its classes as if they were normal Python objects, instead of writing SPARQL by hand | My whole pipeline is Python already, so this fits |
+| **INCI** | International Nomenclature of Cosmetic Ingredients. The standard naming system printed on every product label | Water is written `AQUA`, vitamin B3 is written `NIACINAMIDE` |
+| **CosIng** | The European Commission's register of cosmetic ingredients, 28,573 of them, kept under Regulation (EC) 1223/2009 | I have already linked my dataset to it |
 
-### Their ontology: three files, then merged
+---
+
+## 2. What I am actually building, in one paragraph
+
+A person in Lebanon says what their skin is like and what they can spend. The
+system returns skincare products that suit them **and that they can actually
+buy here**, and for each recommendation it can say where the claim came from.
+The ontology is the part in the middle that holds the knowledge: which
+ingredients suit which skin, which ones make which problems worse, and what
+each product contains.
+
+---
+
+## 3. The papers
+
+### 3.1 Hansanie and Silva (2024), IEEE ICIPRoB
+`papers/ICIPRob2024_paper_287.pdf`
+
+**What they built.** A system where a person uploads a photo of their face. A
+neural network (a CNN, a type of model that reads images) grades how severe
+their acne is. That grade goes into an ontology together with what the person
+typed about their skin, and the ontology picks the products.
+
+**How they built the ontology, which is the part I am copying.** They did not
+build one big file. They built three separate ones and joined them:
 
 ```mermaid
 graph LR
-    A["<b>Skincare concepts</b><br/>skin types, concerns"]
-    B["<b>Product information</b><br/>products, ingredients"]
-    C["<b>User profile</b><br/>person, allergies, feedback"]
-    A --> M["<b>Merged</b><br/>skincare domain ontology"]
+    A["<b>Skincare concepts</b><br/>skin types, concerns,<br/>what suits what"]
+    B["<b>Product information</b><br/>products and<br/>their ingredients"]
+    C["<b>User profile</b><br/>the person, their<br/>allergies, their ratings"]
+    A --> M["<b>Joined into one</b><br/>skincare domain ontology"]
     B --> M
     C --> M
-    M --> R["Pellet reasoner<br/>checks consistency"]
+    M --> R["<b>Pellet reasoner</b><br/>checks nothing contradicts"]
 ```
 
-### Their classes and properties, as published
+They built the class hierarchy **top down**, meaning they wrote the general
+idea first (`Product`) and then the specific ones underneath it
+(`TreatmentProduct`, then `AcneControlCleanser`).
 
-```mermaid
-graph LR
-    TP["TreatmentProduct<br/><i>AcneControlCleanser</i>"]
-    ST["SkinType<br/><i>OilySkin</i>"]
-    KI["KeyIngredient<br/><i>SalicylicAcid</i>"]
-    PR["ProductRecommendation"]
-    PE["Person<br/>hasAge, hasGender"]
-    TP -->|suitableFor| ST
-    TP -->|hasKeyIngredient| KI
-    TP -->|hasProductRecommendation| PR
-    PR -->|hasRating| RT["xsd:int"]
-    PE -.->|gives| PR
-```
+**Their actual properties, copied from the paper:**
 
-### Three facts worth stating
+| Property | From | To | Plain meaning |
+|---|---|---|---|
+| `suitableFor` | `TreatmentProduct` (AcneControlCleanser) | `SkinType` (OilySkin) | this product suits this skin |
+| `hasKeyIngredient` | `TreatmentProduct` | `KeyIngredient` (SalicylicAcid) | this is what is in it |
+| `hasProductRecommendation` | `TreatmentProduct` | `ProductRecommendation` | a user rated it |
+| `hasAge`, `hasGender` | `Person` | a number, a word | who the user is |
+| `hasRating` | `ProductRecommendation` | a number | the score they gave |
 
-| Fact | Detail |
+**Where their vocabulary came from.** They interviewed dermatologists and
+health professionals, and separately surveyed 21 people aged 21 to 30 about
+their routines and buying habits. They put the results in a spreadsheet first,
+then turned that into classes.
+
+**Their tools:** Protégé to build it, Pellet to check it, Owlready2 to query it
+from Python, Tkinter (a basic Python toolkit for desktop windows) for the
+interface.
+
+**What I take, and why:**
+
+| I take | Because |
 |---|---|
-| Vocabulary source | They interviewed dermatologists and health professionals, then surveyed 21 consumers aged 21 to 30 |
-| Class hierarchy | Built top down: general concepts first, then specialised |
-| The 87.5% figure | **Not model accuracy.** Their CNN scored 77.5% accuracy, 76.6% F1. The 87.5% is how many of 24 survey participants said they liked the results |
+| Three ontologies, joined | The three parts change at completely different speeds. Product data changes weekly. Clinical knowledge barely changes. Keeping them apart means I can hand a dermatologist one small file instead of 12,629 rows |
+| A reasoner from the start | I have spent months finding faults in my own data that produced plausible wrong answers instead of errors. A reasoner is a tool that complains loudly, which is exactly what I have been missing |
+| Ratings kept inside the ontology | A rating becomes a fact about a product with a person attached, not a separate table I have to remember to join |
+| Owlready2 | My whole pipeline is Python |
 
-### Take or leave
+**What I leave:** the CNN. I have no facial photographs, no ethical approval to
+collect any, and my contribution is on the product side. Their three layer
+design means it could be added later without touching anything else.
 
-| Take | Leave |
-|---|---|
-| Three ontologies, merged | The CNN. I have no facial images and no ethics approval |
-| Pellet or HermiT reasoner from the start | Tkinter desktop interface |
-| Feedback (`hasRating`) modelled inside the ontology | |
-| Owlready2 to query from Python | |
+**One number to be careful with.** Their headline is 87.5 percent. That is not
+the accuracy of their model. Their model scored 77.5 percent accuracy. The 87.5
+is the share of 24 survey participants who said they liked the products they
+were shown. I should quote it correctly.
+
+**One thing they did that I have not.** They consulted dermatologists. My skin
+type and concern vocabulary came from what retailers publish, checked against
+the formula. Nobody clinical has reviewed it. That is a real gap and I should
+say so before anyone asks.
 
 ---
 
-## 3. Paper 3, Moe & Aung (2014)
+### 3.2 Moe and Aung (2014), IJITCS
+`papers/Building_Ontologies_for_Cross_domain_Rec.pdf`
 
-Two ontologies joined by an explicit bridge.
+**What they built.** Two ontologies with a bridge between them. One holds the
+user's *problem*, the other holds *cosmetics*. A recommendation is a path from
+a problem to a product.
+
+They get from a vague complaint to a specific problem by asking questions, one
+at a time, narrowing down (they call this Taxonomic Conversational Case Based
+Reasoning). Then they use an algorithm from graph theory called Ford Fulkerson
+to work out which products the problem connects to most strongly.
 
 ```mermaid
 graph LR
-    subgraph P["Problem domain"]
-        Q["Questions"] --> A2["Answers"] --> PB["Problems"] --> SO["Solutions"]
+    subgraph P["Problem side"]
+        Q["Questions"] --> A["Answers"] --> PB["Problems"] --> SO["Solutions"]
     end
-    subgraph C["Cosmetics domain"]
-        CO["Cosmetics<br/>Toner · Cleanser · Lotion"]
+    subgraph C["Cosmetics side"]
+        CO["Cosmetics<br/>Toner, Cleanser, Lotion"]
         CF["<b>ContextualFeatures</b>"]
         CF --> PZ["PlaceZone"]
         CF --> AG["AgeLevel"]
         CF --> BR["CosmeticsBrand"]
         CF --> SE["Season"]
-        CF --> PRc["PriceRange"]
+        CF --> PR["PriceRange"]
     end
-    SO -.->|Ford Fulkerson bridge| CO
+    SO -.->|bridge| CO
 ```
 
-**The idea worth taking is `ContextualFeatures`.** Price, place and brand are
-not properties of a product on its own. They describe a product *as sold in a
-place*. The same cream in Beirut and in a global catalogue sits in two
-different contexts.
+**The idea I am taking from this paper, and it changed my design.** Their
+`ContextualFeatures` class. Price, place and brand are not properties of a
+product by itself. They describe *a product as sold somewhere*. The same cream
+in a global catalogue and in a Beirut pharmacy is in two different situations.
 
-Four of my columns belong there:
+I had these sitting flat in my spreadsheet as ordinary columns:
 
-| My column | Values | Belongs under |
+| My column | Values | Where it belongs |
 |---|---|---|
-| `price_tier` | 3 | `ContextualFeature` |
-| `sold_by_shops` | 9 retailers | `ContextualFeature` |
-| `country` | 55 | `ContextualFeature` |
-| `source_category` | 4 | `ContextualFeature` |
+| `price_tier` (I should rename this) | 3 bands | under `ContextualFeature` |
+| `sold_by_shops` | 9 Lebanese shops | under `ContextualFeature` |
+| `country` | 55 | under `ContextualFeature` |
+| `source_category` | Global, Lebanese retail, Lebanese origin, Both | under `ContextualFeature` |
 
-**Leave:** the conversational question asking, and Ford Fulkerson. My products
-already carry scores for availability, price and evidence tier.
+For a Lebanese system this is not a small detail. Availability *is* the
+product's context, and it is the whole reason my dataset exists.
 
-**Their weak point:** ingredients are stored as plain text with no register
-behind them, so nothing in their ontology can say an ingredient is restricted
-under EU law. Mine can.
+**What I leave:** the question and answer conversation, and Ford Fulkerson. My
+products already carry scores for availability, price and evidence strength, so
+a filter does the same work with far less machinery.
+
+**Their weak point, which is my strength.** Their ingredients are stored as
+plain text with no register behind them. Nothing in their ontology can say an
+ingredient is restricted under EU law. Mine can, for 99.2 percent of products
+that have a formula.
 
 ---
 
-## 4. Papers 4 and 5, OntoCosmetic
+### 3.3 Serna et al. (2021) and Gabriel et al. (2023): OntoCosmetic
+`papers/Towards an ontology-based...pdf` and `papers/Chapter-ESCAPE-33-FINAL.pdf`
+and the ontology file itself, `OntoCosmetic-30-withoutRules.owl`
+
+I now have their actual OWL file, so I can describe it from the file rather
+than from the paper.
+
+| | |
+|---|---|
+| Classes | 116 |
+| Object properties | 26 |
+| Data properties | 20 |
+| Individuals already filled in | 279 |
+| Base address | `https://purl.org/ontocosmetic` |
+
+**What it is for.** Helping a chemist *design* a cream. Not helping a person
+*choose* one. Once I opened the file that became very clear:
+
+```mermaid
+graph TB
+    ING["<b>Ingredient types</b><br/>Emollient · Surfactant · Thickener<br/>Active · Preservative · UvFilter<br/>Humectant · Antioxidant · Stabilizer"]
+    EMU["<b>Emulsion science</b><br/>HLB · Rheology · Viscosity<br/>DropletSize · Polarity · Phase"]
+    HEU["<b>Heuristics</b><br/>HeuristicFacialCream<br/>HeuristicSunCream<br/>HeuristicForSurfactant"]
+    FOR["<b>Formulation</b><br/>ingredients plus dosage"]
+    ING --> FOR
+    EMU --> FOR
+    HEU --> FOR
+```
+
+Classes like `HLB`, `DropletSize`, `AqueousThickeners`, `OWCosmeticEmulsion`
+and `HeuristicForSurfactant` are about how to make an emulsion stable. I have
+none of that data, and I never will, because manufacturers do not publish
+droplet sizes or dosages.
+
+**What I take from the file anyway, and these are real:**
+
+| From OntoCosmetic | What it is | How I use it |
+|---|---|---|
+| `Ingredient_Type` hierarchy: `Emollient`, `Surfactant`, `Thickener`, `Active`, `Preservative`, `UvFilter`, `Humectant`, `Antioxidant`, `Stabilizer`, `PHRegulator` | a functional classification of ingredients | I already hold this. CosIng gives me the function of every ingredient, on 92.7 percent of products. I can map my functions onto their type names and reuse their vocabulary rather than invent one |
+| `hasINCIcode` | a data property holding the INCI name | Confirms INCI is the right key to join on, which is what I did |
+| `hasOrigin` (natural or synthetic) | where an ingredient comes from | People ask about this constantly. My `free_from` column is a rough version of the same idea |
+| `hasPricePerKilogram` | price as a property of an ingredient | Shows price belongs in the model, not outside it |
+| The split between `ProductProperty` and `IngredientProperty` | two different kinds of property | I have been mixing them. `spf` and `size_ml` belong to the product. Function and restriction belong to the ingredient and are inherited from CosIng |
+
+**Decision: cite it, borrow the ingredient type names, do not import the file.**
+Importing 116 classes to use 10 of them would bring a large amount of emulsion
+chemistry into an ontology about buying skincare in Beirut.
+
+---
+
+### 3.4 The paper I could not read
+
+The Academia link would not open for me. It returns a 404 without a logged in
+session, both through a plain fetch and through a browser. I am not going to
+summarise a paper I have not read. If I export the PDF it goes here.
+
+---
+
+### 3.5 Noy and McGuinness (2001), Ontology Development 101
+
+The standard beginner's guide, cited by all the papers above. Its main advice
+is the reason this document exists: **look for an existing vocabulary before
+inventing your own.**
+
+---
+
+## 4. Why my design looks the way it does
+
+This is the section I most need to be able to defend, so here is the reasoning
+in order.
+
+### 4.1 Why an ontology at all, and not just the spreadsheet
+
+My spreadsheet can already answer "show me products for oily skin under 30
+dollars". What it cannot do is answer *why*, or notice a contradiction.
 
 ```mermaid
 graph LR
-    I["<b>Ingredient</b><br/>emollient · surfactant<br/>thickener · active · preservative"]
-    F["<b>Formulation</b><br/>ingredients plus dosage"]
-    P["<b>Property</b><br/>product props · ingredient props<br/>HLB · origin"]
-    H["<b>DesignHeuristic</b>"]
-    I --> F
-    I --> P
-    F --> P
-    H --> F
+    S["<b>Spreadsheet</b><br/>can filter rows"] --> S2["'suits oily skin'<br/>is just a word<br/>in a cell"]
+    O["<b>Ontology</b><br/>can follow relationships"] --> O2["'suits oily skin'<br/>because it contains<br/>a surfactant that<br/>reduces oil, and the<br/>manufacturer said so"]
 ```
 
-Built for a chemist designing a cream, not for a person choosing one. Gabriel
-et al. turned it into an app called Formultools that screens ingredients,
-selects them against criteria, and checks a formulation against heuristics.
+### 4.2 Why three files and not one
 
-| Take | Leave |
-|---|---|
-| Ingredients typed by **function**. I already hold this in `ingredient_functions`, 92.7% | HLB, rheology, dosages. I have none of that data and never will |
-| Split **product properties** (`spf`, `size_ml`) from **ingredient properties** (function, restriction) | The formulation design branch |
-| Origin, natural or synthetic, as an ingredient property | |
+Because the three things change at different speeds and are checked by
+different people.
 
----
+| File | Changes | Who checks it | Size |
+|---|---|---|---|
+| Concepts | rarely | a dermatologist | small, a few pages |
+| Products | every time I scrape | me, against the CSV | 12,629 products |
+| User | every time somebody uses it | nobody, generated | tiny |
 
-## 5. What I am reusing: four vocabularies
+If I put them in one file, a dermatologist reviewing my clinical rules has to
+open a file with 12,629 products in it. That will not happen.
 
-```mermaid
-graph TB
-    MY["<b>My ontology</b><br/>skin type ↔ concern ↔ ingredient ↔ product"]
-    C1["<b>CosIng</b><br/>EU ingredient register<br/>done"]
-    C2["<b>schema.org</b><br/>Product · Offer · Brand"]
-    C3["<b>PROV-O</b><br/>who said it, and when"]
-    C4["<b>SKOS</b><br/>controlled lists"]
-    C1 --> MY
-    C2 --> MY
-    C3 --> MY
-    C4 --> MY
-```
+### 4.3 Why evidence strength is in the model and not a footnote
 
-| Vocabulary | Does what | Where I stand |
+Every claim in my dataset carries a level from 1 to 4 saying who made it:
+
+| Level | Who said it | Count |
 |---|---|---|
-| **CosIng** | ingredient to function, CAS number, restriction | **Done.** 11,704 products linked, 92.7% |
-| **schema.org** | separates `Product` (the thing) from `Offer` (one shop, one price, one date) | Needed for 9 Lebanese shops |
-| **PROV-O** | `wasDerivedFrom`, `wasAttributedTo`, `generatedAtTime` | My tier 1 to 4 system |
-| **SKOS** | turns 14 benefits, 7 concerns, 22 types, 5 skin types into concepts rather than strings | 8 columns |
+| 1 | the manufacturer | 4,460 |
+| 2 | a retailer | 4,539 |
+| 3 | a weaker published source | 1,954 |
+| 4 | nobody, I worked it out from the formula | 1,676 |
 
-**Dropped:** ChEBI, SNOMED CT, GS1 GPC, CHEMINF, OBI, eNanoMapper, OntoCAPE,
-UMLS, DermO, SPO. Same reason each time: a large import, and nothing in it I
-can use.
+Nearly 87 percent came from a source that actually stated it. If the system
+treats my own guess the same as the manufacturer's statement, it will make
+confident recommendations it cannot support. Putting the level in the ontology
+means a query can simply exclude level 4.
+
+### 4.4 Why availability is a first class idea
+
+Every other paper I read assumes you can buy anything. In Lebanon you often
+cannot. A product that suits your skin and is not sold here is not a
+recommendation, it is a frustration. So `Offer`, `Retailer` and availability
+are in the model, not bolted on afterwards.
 
 ---
 
-## 6. My proposed structure
+## 5. My proposed structure
 
 ```mermaid
 graph TB
-    subgraph ONE["1 · Concepts. Small, stable, a dermatologist can read it"]
+    subgraph ONE["1 · CONCEPTS. Small, stable, reviewable by a clinician"]
         ST["SkinType · 5"]
         SC["SkinConcern · 7"]
         BN["Benefit · 14"]
-        IF["IngredientFunction"]
+        IF["IngredientFunction<br/>from CosIng"]
     end
-    subgraph TWO["2 · Products. Large, regenerated from the CSV"]
+    subgraph TWO["2 · PRODUCTS. Large, generated from the CSV"]
         PD["Product · 12,629"]
         IG["Ingredient · 13,699"]
         BD["Brand · 1,463"]
         OF["Offer · price, shop, date"]
-        CLM["Claim + EvidenceTier"]
-        CTX["ContextualFeature"]
+        CLM["Claim + EvidenceLevel"]
+        CTX["ContextualFeature<br/>price band, shop, country"]
     end
-    subgraph THREE["3 · User. Tiny, one per person"]
+    subgraph THREE["3 · USER. Tiny, one per person"]
         UP["UserProfile"]
         AL["avoids Ingredient"]
         BG["Budget"]
     end
-    ONE --> BR["<b>Bridge file</b><br/>owl:imports × 3"]
+    ONE --> BR["<b>Bridge file</b><br/>imports all three"]
     TWO --> BR
     THREE --> BR
     BR --> RS["Reasoner<br/>Pellet or HermiT"]
 ```
 
-Why three files and not one:
+The three files meet at only three shared classes. Keeping that connection
+small is what lets each file be reviewed on its own.
 
-| Ontology | Changes when | Who checks it |
-|---|---|---|
-| Concepts | rarely, the knowledge is stable | a dermatologist |
-| Products | constantly, every scrape and price | me, against the CSV |
-| User profile | per person, at runtime | nobody, it is generated |
-
-They meet at three shared classes. Keeping that interface small is what lets
-each file be reviewed on its own.
-
-| Shared class | User | Product | Concepts |
+| Shared class | The user | The product | The concepts |
 |---|---|---|---|
-| `SkinType` | has it | suits it | knows what it is prone to |
-| `SkinConcern` | reports it | addresses or worsens it | knows what helps it |
-| `Ingredient` | avoids it | contains it | types it by function |
+| `SkinType` | has one | suits some | knows what each is prone to |
+| `SkinConcern` | reports some | helps or worsens some | knows what helps each |
+| `Ingredient` | avoids some | contains some | knows what each one does |
 
-Everything else stays put. `Offer`, `Retailer` and `Brand` never leave the
-product file. `Budget` never leaves the user file.
+### The four vocabularies I am reusing
+
+| Vocabulary | What it gives me | Status |
+|---|---|---|
+| **CosIng** | every ingredient gets a function, a CAS number and a legal status from the European Commission | **Done.** 11,704 products, 99.2 percent of those with a formula |
+| **schema.org** | the standard way to describe a `Product` separately from an `Offer` (one shop, one price, one date). Used by every search engine | to do |
+| **PROV-O** | the W3C standard for saying where a fact came from, who said it and when | to do |
+| **SKOS** | the standard for controlled lists, so `Hydrating` and `Hydration` become one concept with two labels instead of two different things | to do |
+
+Dropped: ChEBI, SNOMED CT, GS1 GPC, CHEMINF, OBI, eNanoMapper, OntoCAPE, UMLS,
+DermO, SPO. Same reason each time. A large import and nothing in it I can use.
 
 ---
 
-## 7. The test I will hold it to
+## 6. How I will proceed, step by step
 
-> A hydrating serum under $30, sold in Beirut, safe for sensitive skin, where
-> the suitability claim came from the manufacturer.
+| Step | What I do | Tool | How I know it worked |
+|---|---|---|---|
+| 1 | Write the concepts ontology by hand. 5 skin types, 7 concerns, 14 benefits, and the ingredient function names borrowed from OntoCosmetic | Protégé | It fits on two printed pages |
+| 2 | Run the reasoner on just that file | HermiT inside Protégé | No contradictions. For example nothing is both helped and worsened by the same ingredient function |
+| 3 | Take those two pages to a dermatologist and have them corrected | paper | The gap I admitted in section 3.1 is closed |
+| 4 | Write a Python script that reads `SKINCARE_FINAL.csv` and writes the product ontology | Owlready2 | 12,629 products load and the file opens in Protégé |
+| 5 | Never hand edit the product file | | I can regenerate it any time the dataset changes |
+| 6 | Write the user profile ontology | Protégé | It only holds what a person can tell me |
+| 7 | Write the bridge file that imports all three | Protégé | The reasoner runs over the whole thing without complaint |
+| 8 | Ask the test question below | Owlready2 or SPARQL | It returns products, and I can trace every part of the answer |
+
+### The question I will test it with
+
+> A hydrating serum under 30 dollars, sold in Beirut, safe for sensitive skin,
+> where the suitability claim came from the manufacturer and not from me.
 
 ```mermaid
 graph LR
-    U["UserProfile<br/>Sensitive · budget under $30"] --> Q["Query"]
-    K["Concepts<br/>Sensitive worsened by<br/>fragrance allergens"] --> Q
-    P["Product<br/>Hydrating · no allergen"] --> Q
-    O["Offer<br/>Lebanese shop · under $30"] --> Q
-    C["Claim<br/>tier 1, the manufacturer"] --> Q
-    Q --> R["Answer"]
+    U["User<br/>sensitive skin<br/>budget 30 dollars"] --> Q["Query"]
+    K["Concepts<br/>sensitive skin is worsened<br/>by fragrance allergens"] --> Q
+    P["Product<br/>hydrating, no allergen"] --> Q
+    O["Offer<br/>a Beirut shop, under 30"] --> Q
+    C["Claim<br/>level 1, the manufacturer"] --> Q
+    Q --> R["Answer, with reasons"]
 ```
 
-If the merged ontology answers this, the structure works.
+If it answers that correctly, the structure works. If it cannot, something in
+the design is wrong and I would rather find out at step 8 than at the end.
 
 ---
 
-## 8. Build order
+## 7. Thinking about it as a product for the Lebanese market
 
-| Step | What | How |
+My supervisors will ask what this is for beyond the thesis, so here is my
+answer.
+
+### Who would use it
+
+| Who | What they get |
+|---|---|
+| A person buying skincare | Products that suit them **and are stocked here**, at prices in both dollars and lira |
+| A pharmacy or shop | A way to guide customers using their own stock list rather than a foreign catalogue |
+| A dermatologist | Something to point a patient at, where every claim can be traced to its source |
+| A local brand | Their products appear next to international ones, which no global catalogue does for them |
+
+### What makes it defensible as a local product
+
+| Feature | Why it matters in Lebanon | Comes from |
 |---|---|---|
-| 1 | Concepts ontology | By hand. Small enough to print and take to a dermatologist |
-| 2 | Product ontology | Generated from `SKINCARE_FINAL.csv`. Never edited by hand |
-| 3 | User profile | Last, once I know what steps 1 and 2 can answer |
-| 4 | Bridge file | `owl:imports` and the three joins, nothing else |
-| 5 | Reasoner | After **every** step, not at the end |
+| Only shows what can be bought here | 5,014 products are sold in Lebanese shops and appear in no global catalogue | `source_category` |
+| Prices in dollars and lira, with the date | Prices move quickly and people are paid in one currency and charged in another | `price_usd`, `price_lbp`, `price_seen_date` |
+| Includes 802 Lebanese made products | Local brands are invisible in every international dataset | Lebanese origin source |
+| Every claim traceable | Builds trust, and a shop or clinic can check any recommendation | evidence levels 1 to 4 |
+| Ingredients checked against EU law | A regulator said it, not me | CosIng |
+
+### The honest commercial risks
+
+| Risk | What I would say |
+|---|---|
+| Prices go stale | It is a snapshot with a date on every price, not a live feed. A live version needs a scraping schedule |
+| 827 products still have no ingredient list | Mostly small local brands that publish nothing. Their pages are checked and recorded as such |
+| No clinical review yet | Step 3 above |
+| Not evaluated with real users | Hansanie and Silva used 24 participants. I would need something similar before claiming it works |
 
 ---
 
-## 9. Where I stand against all five papers
+## 8. Where I stand next to the papers
 
-| | Papers 1 to 3 | Papers 4 and 5 | **Mine** |
-|---|---|---|---|
-| Products | 3,800 | not applicable, a design tool | **12,629** |
-| Ingredients linked to a regulator | no, plain text | no, supplier data | **yes, CosIng, 92.7%** |
-| Records who made each claim | no | no | **yes, tier 1 to 4 plus the source page** |
-| Local availability and price | no | no | **yes, 9 Lebanese shops, USD and LBP** |
-| Reviewed by a dermatologist | yes, paper 1 | yes | **not yet, my gap** |
+| | Hansanie & Silva | Moe & Aung | OntoCosmetic | **Mine** |
+|---|---|---|---|---|
+| Purpose | recommend | recommend | design a formula | **recommend, in one market** |
+| Products | small set | small set | 279 ingredients | **12,629** |
+| Ingredients linked to a regulator | no | no | no | **yes, CosIng, 99.2 percent** |
+| Records who made each claim | no | no | no | **yes, four levels plus the page** |
+| Local availability and price | no | partly, `PriceRange` | ingredient price only | **yes, 9 shops, two currencies** |
+| Reviewed by a clinician | **yes** | no | **yes** | **not yet** |
 
-Two points I should make before anyone else does:
+Two things I will say myself before anyone asks me:
 
-1. Paper 1 built their vocabulary with dermatologists. I did not. Mine came
-   from what retailers publish, checked against the formula. That is a real
-   gap and closing it is a next step.
-2. Size is not my argument. 12,629 against 3,800 sounds stronger than it is,
-   because their ingredient depth per product is similar. **Provenance,
-   regulatory linkage and local availability** are the arguments.
+1. Nobody clinical has reviewed my vocabulary yet. Step 3 fixes that.
+2. Size is not my argument. Twelve thousand products against a few thousand
+   sounds better than it is. **Provenance, regulatory linkage and local
+   availability** are the arguments.
 
 ---
 
-## References
+## 9. References
 
 | # | Reference | File |
 |---|---|---|
-| 1 | Hansanie, M. and Silva, T. (2024). *Ontology based Machine Learning Approach for Facial Skincare Products Recommendation.* IEEE ICIPRoB, University of Moratuwa. DOI 10.1109/ICIPRoB62548.2024.10543444 | `papers/ICIPRob2024_paper_287.pdf` |
-| 2 | *Personalized Skincare Recommendation System Based on Ontology and User Preferences* (2025). ResearchGate 394583703 | not open access |
-| 3 | Moe, H.H. and Aung, W.T. (2014). *Building Ontologies for Cross-domain Recommendation on Facial Skin Problem and Related Cosmetics.* IJITCS 6(6):33 to 39. DOI 10.5815/ijitcs.2014.06.05 | `papers/Building_Ontologies_for_Cross_domain_Rec.pdf` |
-| 4 | Serna, J. et al. (2021). *Towards an ontology-based decision support system for the design of emulsion based cosmetic products.* ECCE13. HAL hal-04674074 | `papers/Towards an ontology-based...pdf` |
-| 5 | Gabriel, A. et al. (2023). *Decision making software for cosmetic product design based on an ontology.* ESCAPE 33, 1987 to 1992. DOI 10.1016/B978-0-443-15274-0.50316-4 | `papers/Chapter-ESCAPE-33-FINAL.pdf` |
-| 6 | Noy, N.F. and McGuinness, D.L. (2001). *Ontology Development 101.* Stanford KSL-01-05 | |
-| 7 | European Commission (2009). *Regulation (EC) No 1223/2009 on cosmetic products* | |
-| 8 | W3C (2013). *PROV-O.* W3C (2009). *SKOS Reference* | |
+| 1 | Hansanie, M. and Silva, T. (2024). *Ontology based Machine Learning Approach for Facial Skincare Products Recommendation.* IEEE ICIPRoB. DOI 10.1109/ICIPRoB62548.2024.10543444 | `papers/ICIPRob2024_paper_287.pdf` |
+| 2 | Moe, H.H. and Aung, W.T. (2014). *Building Ontologies for Cross-domain Recommendation on Facial Skin Problem and Related Cosmetics.* IJITCS 6(6). DOI 10.5815/ijitcs.2014.06.05 | `papers/Building_Ontologies_for_Cross_domain_Rec.pdf` |
+| 3 | Serna, J. et al. (2021). *Towards an ontology-based decision support system for the design of emulsion based cosmetic products.* ECCE13. HAL hal-04674074 | `papers/Towards an ontology-based...pdf` |
+| 4 | Gabriel, A. et al. (2023). *Decision making software for cosmetic product design based on an ontology.* ESCAPE 33. DOI 10.1016/B978-0-443-15274-0.50316-4 | `papers/Chapter-ESCAPE-33-FINAL.pdf` |
+| 5 | OntoCosmetic ontology file, 116 classes | `papers/OntoCosmetic-30-withoutRules.owl` |
+| 6 | *Personalized Skincare Recommendation System Based on Ontology and User Preferences* (2025). ResearchGate 394583703 | not open access |
+| 7 | Noy, N.F. and McGuinness, D.L. (2001). *Ontology Development 101.* Stanford KSL-01-05 | |
+| 8 | European Commission (2009). *Regulation (EC) No 1223/2009 on cosmetic products* | |
+| 9 | W3C (2013). *PROV-O.* W3C (2009). *SKOS Reference.* schema.org vocabulary | |
