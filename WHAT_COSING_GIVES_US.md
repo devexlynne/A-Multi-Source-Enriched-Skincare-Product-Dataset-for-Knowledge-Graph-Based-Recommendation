@@ -1,218 +1,214 @@
-# What CosIng actually does for this dataset
+# CosIng: the EU ingredient register, and what it gave my dataset
 
-Two different questions get confused here, so they are separated below.
-
-1. What did **today's CosIng work** add? It is done, and it already changed
-   what the dataset can answer.
-2. What would **CosIng-KG**, the RDF version, add on top? Less than you might
-   expect, and the honest reason is worth knowing.
-
-Every number and product name below came out of the live file.
+One page for anyone who asks what the European register added and why it was
+worth the work.
 
 ---
 
-## Part 1: what today's work already gives you
+## 1. What CosIng is
 
-Four columns were added: `ingredient_functions`, `cosing_matched`,
-`cosing_coverage`, `restricted_ingredients`. Here is what each one buys.
+CosIng is the European Commission's own list of cosmetic ingredients, kept
+under Regulation (EC) 1223/2009. It is not an ontology and not a research
+dataset. It is the register that companies selling into the EU have to work
+against.
 
-### Example 1. A customer question you could not answer yesterday
+| | |
+|---|---|
+| Entries | 28,573 |
+| Kept by | European Commission, DG GROW |
+| Legal basis | Regulation (EC) No 1223/2009 |
+| What each entry holds | INCI name, CAS number, EC number, recognised functions, restriction reference, update date |
 
-> *"I want a sunscreen for sensitive skin, with no EU declarable allergen,
-> under $30, that I can actually buy in Beirut."*
+---
 
-That is four filters, and one of them did not exist before today:
+## 2. The problem it solves
+
+Before the link, my `ingredients` column was a string. A long, unpunctuated,
+inconsistently spelled string.
+
+```mermaid
+graph LR
+    A["<b>Before</b><br/>ingredients =<br/>'AQUA, NIACINAMIDE,<br/>PHENOXYETHANOL, ...'<br/><i>text a machine cannot reason about</i>"]
+    B["<b>After</b><br/>each name resolved to a<br/>register entry with a<br/>function, a CAS number<br/>and a legal status"]
+    A -->|CosIng| B
+```
+
+With a string I can search for the word "phenoxyethanol". With a register entry
+I can ask whether a product contains a preservative that the EU restricts, and
+cite the article that says so.
+
+---
+
+## 3. How the linking works
+
+```mermaid
+graph TB
+    F["Product formula<br/>'ROSA DAMASCENA FLOWER WATER, NIACINAMIDE, ...'"]
+    S["<b>Split</b><br/>commas inside names and brackets are protected<br/>so 1,2-Hexanediol stays one ingredient"]
+    N["<b>Normalise</b><br/>bullets to commas, drop brackets,<br/>lower case, strip labels"]
+    L["<b>Look up</b> in CosIng<br/>direct hit, then slash alternatives,<br/>then common name to INCI,<br/>then botanical prefix"]
+    O["<b>Four new columns</b>"]
+    F --> S --> N --> L --> O
+```
+
+Four lookup passes were needed because shops do not write INCI cleanly:
+
+| Pass | Handles | Example |
+|---|---|---|
+| Direct | the name as registered | `NIACINAMIDE` |
+| Slash alternatives | one ingredient written in three languages | `Aqua/Water/Eau` |
+| Common name to INCI | what small brands actually write | `Shea Butter` to `Butyrospermum Parkii Butter` |
+| Botanical prefix | a plant name missing its part | `Prunus Amygdalus Dulcis` to `... Oil` |
+
+---
+
+## 4. The four columns it produced
+
+| Column | Holds | Filled on |
+|---|---|---|
+| `ingredient_functions` | what each ingredient does, counted | 11,703 products |
+| `cosing_matched` | how many of the product's ingredients are registered | 11,704 products |
+| `cosing_coverage` | that as a percentage of the formula | 11,704 products |
+| `restricted_ingredients` | the ones the EU restricts, named | 9,613 products |
+
+---
+
+## 5. A worked example
+
+**Revox B77, JUST 10% Niacinamide Daily Moisturiser.** Sold in the global
+catalogue and by a Beirut shop, $8.83. Eight ingredients, all eight found in
+the register.
+
+| # | Ingredient as written | CAS number | Function per the Commission | Restricted |
+|---|---|---|---|---|
+| 1 | ROSA DAMASCENA FLOWER WATER | 90106-38-0 | fragrance, skin conditioning, skin protecting | |
+| 2 | NIACINAMIDE | 98-92-0 | smoothing | |
+| 3 | PROPYLENE GLYCOL | 57-55-6 | humectant, skin conditioning, solvent, viscosity controlling | |
+| 4 | ZINC CITRATE | 546-46-3 | antiplaque, oral care | **yes, Annex III/24** |
+| 5 | PHENOXYETHANOL | 122-99-6 | antimicrobial, preservative | **yes, Annex V/29** |
+| 6 | XANTHAN GUM | 11138-66-2 | binding, emulsion stabilising, gel forming | |
+| 7 | PPG-1-PEG-9 LAURYL GLYCOL ETHER | none assigned | surfactant, cleansing and emulsifying | |
+| 8 | DISODIUM EDTA | 139-33-3 | chelating, viscosity controlling | |
+
+What the four columns then say about this one product:
 
 ```
-product_type contains "Sunscreen"
-sensitivity  = "Sensitive"
-restricted_ingredients is empty     <- new
-price_usd    < 30
-shops_in_lebanon >= 1
+cosing_matched          8
+cosing_coverage         100
+ingredient_functions    Skin Conditioning (3), Viscosity Controlling (3),
+                        Surfactant - Cleansing (2), Fragrance (1), ...
+restricted_ingredients  Phenoxyethanol, Zinc Citrate
 ```
 
-**51 products match.** Three of them:
-
-| | |
-|---|---|
-| A-Derma Creme Tres Haute Protection Sans Parfum | $9.50 |
-| A-Derma Protect Spray SPF50+ 200ml | $25.50 |
-| Avene Anti-Aging Suncare SPF 50+ 50ml | $22.50 |
-
-Without the CosIng columns, the allergen filter is not available at all. You
-could filter on the free-from claims the shop chose to print, which is
-marketing copy, not a regulatory check.
-
-### Example 2. Answering "why?" with a citation instead of an opinion
-
-Take `LBR-00011`, Eucerin Sensitive Protect Dry Touch Sun Gel-Cream SPF50+,
-sold in Lebanon. The dataset flags it as **may worsen dryness**.
-
-**Before today**, if a supervisor asked why, the answer was: because a rule in
-this project flags alcohol denat.
-
-**After today**, the answer is: the product contains ALCOHOL DENAT., which the
-European Commission records as an **astringent** and a solvent, register entry
-74174. Astringents dry the skin.
-
-Same conclusion. The authority moved from me to the Commission. That is the
-entire point.
-
-The row also shows `cosing_coverage = 100%`, meaning every single ingredient
-in that formula was found in the register, so nothing is being guessed at.
-
-### Example 3. Questions about the whole catalogue
-
-The function column turns 13,184 free-text ingredient lists into something
-countable:
-
-| EU recognised function | products |
-|---|---|
-| Skin conditioning | 10,474 |
-| Viscosity controlling | 8,917 |
-| Fragrance | 8,625 |
-| Solvent | 7,643 |
-| Hair conditioning | 6,592 |
-| Skin conditioning, emollient | 6,072 |
-
-That last one is a small surprise worth checking: 6,592 products in a
-*skincare* dataset contain a hair-conditioning agent. Not an error, since many
-polymers do both jobs, but it is the kind of question that was unaskable
-before.
-
-Another: **120 products contain a UV filter but are not sold as sunscreen.**
-Day creams with SPF, mostly. For a recommender that matters, because somebody
-searching for sun protection would never have found them by category alone.
-
-### Example 4. Restricted ingredients, in context
-
-**9,321 products** contain at least one ingredient CosIng records a
-restriction against:
-
-| | |
-|---|---|
-| Phenoxyethanol | 3,529 |
-| Citric acid | 3,143 |
-| Sodium hydroxide | 1,606 |
-| Sodium benzoate | 1,440 |
-| Potassium sorbate | 1,285 |
-| Limonene | 945 |
-
-This is not a warning list. Restricted means the regulation sets a maximum
-concentration, not that the ingredient is dangerous. Phenoxyethanol is an
-ordinary preservative and citric acid adjusts pH. The column exists so
-somebody can ask the question, not to answer it for them.
+**Read the restriction correctly.** `V/29` and `III/24` are pointers into the
+annexes of the regulation, not a warning. Annex V is the list of preservatives
+that are *allowed*, each with a maximum concentration. Phenoxyethanol at entry
+29 is permitted up to 1%. So the column means *this ingredient is regulated and
+here is where to look it up*, not *this product breaks the law*. Saying
+otherwise would be a serious misreading, and the dataset never implies it.
 
 ---
 
-## The finding this produced
+## 6. Where the dataset stands
 
-This is the part worth taking to a supervisor.
-
-The dataset marks a product safe for sensitive skin using the 26 fragrance
-allergens the EU requires to be declared under Regulation 1223/2009 Annex III.
-Cross-checking that against the CosIng-linked formulas found something:
-
-> **574 products marked safe for sensitive skin contain one of the 26
-> declarable allergens.** That is 12% of everything marked Sensitive.
-
-Which allergen:
-
-| | |
+| Measure | Result |
 |---|---|
-| linalool | 303 |
-| limonene | 291 |
-| benzyl alcohol | 196 |
-| citronellol | 136 |
-| geraniol | 108 |
-| hexyl cinnamal | 75 |
+| Products with a formula | 11,802 of 12,629, 93.5% |
+| Of those, linked to CosIng | 11,704, **99.2%** |
+| Individual ingredient mentions | 295,991 |
+| Mentions found in the register | 285,917, **96.6%** |
+| Median coverage per product | **100%** |
 
-These add up to more than 574 because a product can contain several.
+How well each product matched:
 
-And where the "sensitive" claim came from:
+| Coverage | Products | Share |
+|---|---|---|
+| 100% of its ingredients found | 9,032 | 77.2% |
+| 90 to 99% | 1,256 | 10.7% |
+| 75 to 89% | 790 | 6.7% |
+| under 75% | 626 | 5.3% |
 
-| | |
-|---|---|
-| tier 1, the manufacturer said so | 224 |
-| tier 2, a retailer said so | 197 |
-| tier 3, weaker source | 151 |
-
-**This is not a bug in the dataset.** The dataset faithfully records what the
-manufacturer claimed. What the CosIng link reveals is a real tension between
-two things that are both true:
-
-- the manufacturer markets the product for sensitive skin, and
-- the formula contains an ingredient the EU requires to be declared because it
-  can cause a reaction in sensitive people.
-
-Both can hold at once. Benzyl alcohol is a preservative that happens to also
-be on the allergen list. Limonene occurs naturally in citrus oils. A product
-can be formulated carefully and still contain one.
-
-The sharpest single case in the data: **bondi sands "Fragrance Free Sunscreen
-Daily Face Lotion" contains benzyl alcohol.** Fragrance-free as a marketing
-claim, and a declarable fragrance allergen in the formula, both correct at the
-same time, because benzyl alcohol is there as a preservative.
-
-That is a genuinely publishable observation about cosmetic labelling, and it
-exists only because the ingredients were linked to the register.
-
-**What to do with it:** not overwrite the manufacturer's claim. Add a flag,
-something like `allergen_despite_sensitive_claim`, so the recommender can warn
-rather than silently decide. Someone with an allergy to linalool should see
-that, whatever the box says.
+The 3.4% that never matched are mostly trade names, copolymers and supplier
+blends that the register does not carry. That is expected, not a fault.
 
 ---
 
-## Part 2: what CosIng-KG would add
+## 7. What this makes possible
 
-CosIng-KG (<https://github.com/biobricks-ai/cosing-kg>) is the same register,
-published as RDF instead of a spreadsheet.
+```mermaid
+graph LR
+    R["CosIng link"] --> Q1["Find every product<br/>with a restricted preservative"]
+    R --> Q2["Group products by what their<br/>ingredients actually do"]
+    R --> Q3["Flag the 26 fragrance allergens<br/>the EU requires to be named"]
+    R --> Q4["Say <i>why</i> a product may worsen<br/>a concern, and cite the register"]
+```
 
-Being direct: **it adds almost no new facts.** Today's work already extracted
-the function, the CAS number and the restriction from the source data. The
-knowledge graph does not know anything the CSV did not.
+**The most common functions across all 11,802 formulas**, which is a picture of
+the market rather than of any one product:
 
-What it adds is **identifiers**, and that matters in exactly one situation.
-
-Right now an ingredient in this dataset is a string, `"ALCOHOL DENAT."`,
-matched to a register row. In CosIng-KG it would be a URI, something the whole
-Semantic Web can point at. Concretely:
-
-| what you have now | what a URI adds |
+| Function | Products |
 |---|---|
-| a string matched to a row | a stable identifier |
-| joinable to CosIng only | joinable to any graph that also uses CosIng URIs |
-| your own copy of the register | the same identity as everyone else's copy |
+| Skin conditioning | 11,265 |
+| Viscosity controlling | 9,477 |
+| Fragrance | 9,052 |
+| Solvent | 8,746 |
+| Hair conditioning | 6,919 |
+| Skin conditioning, emollient | 6,452 |
+| Humectant | 5,847 |
 
-So the value is **joinability, not content.** Worth doing when:
+**The most common restricted ingredients:**
 
-- the thesis publishes a knowledge graph others are meant to query or extend,
-- the graph gets linked to ChEBI, a toxicology resource, or another dataset
-  that already uses those identifiers,
-- somebody needs to combine this with an EU-wide resource without matching on
-  strings again.
-
-Not worth doing if the ontology stays a local artifact that answers local
-questions. In that case the CSV columns you already have do the same work with
-less machinery.
-
-**A middle option that costs almost nothing:** keep the columns you have and
-add the CosIng reference number as a URI next to each ingredient. Entry 74174
-becomes an identifier rather than a number in a text field. That gets most of
-the joinability without importing another graph.
+| Ingredient | Products | Why it is regulated |
+|---|---|---|
+| Phenoxyethanol | 4,293 | preservative, Annex V |
+| Citric acid | 3,257 | pH adjuster, conditions apply |
+| Sodium hydroxide | 2,139 | pH adjuster, concentration limits |
+| Sodium benzoate | 1,870 | preservative, Annex V |
+| Potassium sorbate | 1,575 | preservative, Annex V |
+| Limonene | 1,210 | declarable fragrance allergen |
+| Linalool | 1,196 | declarable fragrance allergen |
 
 ---
 
-## Short version
+## 8. The finding I was not looking for
 
-**Today's work** made four things possible that were not: filtering on
-regulatory allergen status, explaining a concern by citing a regulator,
-counting the catalogue by ingredient function, and cross-checking a
-manufacturer's claim against EU labelling law. That last one already produced
-a finding.
+The EU names 26 fragrance allergens that must be listed on the label when they
+are present above a threshold. Because ingredients now carry regulatory status
+and skin type claims carry a source, the two can be checked against each other.
 
-**CosIng-KG** would add stable identifiers so this graph can be joined to
-other people's. Do it if the ontology is meant to be reused by others. Skip it
-if it stays local, and instead store the CosIng reference number as a URI,
-which is an afternoon's work.
+```mermaid
+graph LR
+    A["2,265 products declare<br/>at least one of the EU 26<br/><i>19.2% of all formulas</i>"] --> B["<b>593 of them are marked<br/>suitable for sensitive skin</b>"]
+    C["9,537 products declare<br/>none of the 26"] -.-> D["the safer subset for<br/>a sensitive skin filter"]
+```
+
+The dataset records both the marketing claim and the ingredient. It does not
+overrule either, and it could not do this at all if the claim's source had not
+been kept.
+
+---
+
+## 9. Why a register and not a list of my own
+
+| If I had written my own list | Using CosIng |
+|---|---|
+| I decide what counts as a preservative | the Commission decides |
+| "restricted" means whatever I meant by it | it points at an annex and an entry number |
+| a reviewer has to trust me | a reviewer can look it up |
+| it goes stale the day I stop editing | it is maintained, with an update date per entry |
+
+That is the whole argument. The register lets the dataset make regulatory
+statements without me being the authority behind them.
+
+---
+
+## 10. Files
+
+| File | Contains |
+|---|---|
+| `SKINCARE_FINAL.csv` | the four columns, on 11,704 products |
+| `COMBINED_EVIDENCE.csv` | where each formula was read from, and by which route |
+| `scripts/link_cosing.py` | the original linking pass |
+| `../FINAL_PIPELINE/relink_cosing_properly.py` | the current pass, with the four lookup routes and formula cleaning |
+| `THE_FOUR_COSING_COLUMNS.md` | the same four columns explained one at a time |
+| `GLOSSARY.md` | INCI, CAS, annex, restricted, and the rest of the vocabulary |
