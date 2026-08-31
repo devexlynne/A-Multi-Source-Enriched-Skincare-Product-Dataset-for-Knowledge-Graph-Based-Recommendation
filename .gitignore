@@ -14,3 +14,15 @@ __pycache__/
 *.tmp
 *.bak
 ~$*
+
+# dated backups of the dataset, 25 MB each and rebuildable from the caches.
+# "*.bak" does not match them: the name is SKINCARE_FINAL.csv.bak-relink, so
+# the extension is not the last thing in the filename.
+*.bak-*
+*.csv.bak*
+
+# working lists that are regenerated on demand, not part of the release
+BRANDS_TO_CHECK.csv
+GROUP_A_RECON.csv
+ROWS_TO_REVIEW.csv
+DB_RECOVERIES_TO_CHECK.csv
