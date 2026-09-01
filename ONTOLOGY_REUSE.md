@@ -45,6 +45,26 @@ each product contains.
 
 ## 3. The papers
 
+Five works. Before the detail, the whole of section 3 on one screen, because
+this is the table I would want if somebody asked me in a viva what each paper
+contributed.
+
+| | Methodology | Technique | Results | Evaluated? |
+|---|---|---|---|---|
+| **3.1 Hansanie and Silva (2024)** | dermatologist interviews plus a survey of 21 people, then top down class building, split into three ontologies | CNN grades acne from a photograph, grade written into the ontology, Pellet reasons, Owlready2 queries from Python | CNN accuracy **77.5%**; **87.5%** of 24 survey participants satisfied | partly. No baseline, small sample |
+| **3.2 Moe and Aung (2014)** | eight stated ontological engineering tasks, from glossary of terms to constants table | Taxonomic CCBR narrows the problem, then Ford Fulkerson maximum flow over a weighted graph scores products | flow weights 0.38 to 0.70 per product, ranked; precision, recall and F measure plotted against a threshold alpha | partly. Metrics reported, but no dataset size and no baseline |
+| **3.3 Serna et al. (2021)** | knowledge base assembled from subproblems, solution strategies, ingredient databases and heuristics | emulsion science encoded as heuristics with high and low thresholds, each carrying its source | a case study: the design of a moisturising cream | no |
+| **3.3 Gabriel et al. (2023)** | five planes user centred design, co-design with cosmetics experts, iterative usability testing measured with AttrakDiff | cross platform mobile app on OntoCosmetic; ingredient screening, multi criteria selection, formulation checking | a working tool performing its three functions | **no, and they say so**: expert testing was still future work |
+| **3.4 Abesova et al. (2023)** | middle out, iterative, scope widened twice as new CSVs arrived | OntoRefine to make RDF, GraphDB to hold it, DBpedia through a SPARQL endpoint, class restrictions instead of manual tagging | 36 classes, 6 object and 6 data properties; 9 recommended products for one user | no. One worked example, three limitations stated |
+| **3.5 Noy and McGuinness (2001)** | the seven step guide the other four are all following, knowingly or not | competency questions, reuse before invention, class versus property test | not a system, a method | not applicable |
+
+**What that table tells me, and it is the thing I should say first.** Not one of
+these five reports an evaluation against a ground truth set of correct
+recommendations. Two report user opinion, one reports internal metrics with no
+baseline, one is a case study, one was never tested with experts. The bar for
+evaluation in this area is low, so if I evaluate properly I have something, and
+if I do not I am no worse than the published work but no better either.
+
 ### 3.1 Hansanie and Silva (2024), IEEE ICIPRoB
 `papers/ICIPRob2024_paper_287.pdf`
 
@@ -53,8 +73,21 @@ neural network (a CNN, a type of model that reads images) grades how severe
 their acne is. That grade goes into an ontology together with what the person
 typed about their skin, and the ontology picks the products.
 
-**How they built the ontology, which is the part I am copying.** They did not
-build one big file. They built three separate ones and joined them:
+#### Methodology: where their vocabulary came from
+
+They did not start from a spreadsheet. They started from people.
+
+| Step | What they did |
+|---|---|
+| 1 | Interviewed dermatologists and health professionals |
+| 2 | Surveyed 21 people aged 21 to 30 about routines and buying habits |
+| 3 | Wrote the results into a spreadsheet |
+| 4 | Turned the spreadsheet into classes, building the hierarchy **top down**, general idea first (`Product`), specific ones underneath (`TreatmentProduct`, then `AcneControlCleanser`) |
+| 5 | Split the result into three files rather than one |
+
+#### Technique: three ontologies joined, and a network in front
+
+They did not build one big file. They built three separate ones and joined them:
 
 ```mermaid
 graph LR
@@ -81,16 +114,14 @@ idea first (`Product`) and then the specific ones underneath it
 | `hasAge`, `hasGender` | `Person` | a number, a word | who the user is |
 | `hasRating` | `ProductRecommendation` | a number | the score they gave |
 
-**Where their vocabulary came from.** They interviewed dermatologists and
-health professionals, and separately surveyed 21 people aged 21 to 30 about
-their routines and buying habits. They put the results in a spreadsheet first,
-then turned that into classes.
+The photograph is graded by the CNN, the grade is written into the ontology as
+a fact about the person, and the reasoner does the rest. The image model and
+the knowledge are kept apart, which is why one can be replaced without touching
+the other.
 
 **Their tools:** Protégé to build it, Pellet to check it, Owlready2 to query it
 from Python, Tkinter (a basic Python toolkit for desktop windows) for the
 interface.
-
-**What I take, and why:**
 
 | I take | Because |
 |---|---|
@@ -98,6 +129,21 @@ interface.
 | A reasoner from the start | I have spent months finding faults in my own data that produced plausible wrong answers instead of errors. A reasoner is a tool that complains loudly, which is exactly what I have been missing |
 | Ratings kept inside the ontology | A rating becomes a fact about a product with a person attached, not a separate table I have to remember to join |
 | Owlready2 | My whole pipeline is Python |
+
+#### Results
+
+| What was measured | Number |
+|---|---|
+| Accuracy of the CNN grading acne severity | **77.5%** |
+| Survey participants who said they were satisfied with the products shown | **87.5%** of 24 people |
+
+**Read those two numbers correctly.** The headline in the paper is 87.5
+percent. That is user satisfaction, not system accuracy. The model itself
+scored 77.5. There is no comparison against a baseline recommender and no test
+set of correct recommendations, so the 87.5 is an opinion poll on a small
+group, not a measure of correctness. I will quote it as what it is.
+
+#### What I take, and what I leave
 
 **What I leave:** the CNN. I have no facial photographs, no ethical approval to
 collect any, and my contribution is on the product side. Their three layer
@@ -115,69 +161,175 @@ say so before anyone asks.
 
 ---
 
-### 3.2 Moe and Aung (2014), IJITCS
+### 3.2 Moe and Aung (2014), IJITCS 6(6):33 to 39
 `papers/Building_Ontologies_for_Cross_domain_Rec.pdf`
+University of Technology Yatanarpon Cyber City, and University of Computer
+Studies Yangon, Myanmar
 
 **What they built.** Two ontologies with a bridge between them. One holds the
 user's *problem*, the other holds *cosmetics*. A recommendation is a path from
 a problem to a product.
 
-They get from a vague complaint to a specific problem by asking questions, one
-at a time, narrowing down (they call this Taxonomic Conversational Case Based
-Reasoning). Then they use an algorithm from graph theory called Ford Fulkerson
-to work out which products the problem connects to most strongly.
+#### Methodology: eight tasks, in order
 
-```mermaid
-graph LR
-    subgraph P["Problem side"]
-        Q["Questions"] --> A["Answers"] --> PB["Problems"] --> SO["Solutions"]
-    end
-    subgraph C["Cosmetics side"]
-        CO["Cosmetics<br/>Toner, Cleanser, Lotion"]
-        CF["<b>ContextualFeatures</b>"]
-        CF --> PZ["PlaceZone"]
-        CF --> AG["AgeLevel"]
-        CF --> BR["CosmeticsBrand"]
-        CF --> SE["Season"]
-        CF --> PR["PriceRange"]
-    end
-    SO -.->|bridge| CO
+They did not improvise. They followed a stated ontological engineering
+procedure, and this is the part worth copying because it is a checklist I can
+actually follow:
+
+| Task | What it produces |
+|---|---|
+| 1 | A glossary of terms: every term, its plain language definition, its synonyms and acronyms |
+| 2 | Concept taxonomies, to classify the concepts |
+| 3 | Binary relation diagrams, showing how concepts relate to each other and to concepts in other ontologies |
+| 4 | A concept dictionary: the instances of each concept, their attributes, their relations |
+| 5 | A description of every binary relation in detail |
+| 6 | A description of every instance attribute |
+| 7 | A description of every class attribute |
+| 8 | A constants table, for values that never change |
+
+Both ontologies were then built in Protege.
+
+#### Technique: how the recommendation is computed
+
+Three stages.
+
+**Stage 1, narrowing the problem.** Taxonomic Conversational Case Based
+Reasoning. The user gives a rough query. The system ranks and presents
+questions. The user answers some. It repeats until a definite problem is
+identified. Their `isNextRelatedTo` property is what builds the question
+taxonomy.
+
+**Stage 2, joining the two domains.** The problem and the products are placed
+in a weighted directed acyclic graph, with the problem as source and products
+as targets.
+
+**Stage 3, scoring.** They apply the Ford Fulkerson maximum flow algorithm,
+citing Kirchhoff's law: *everything that leaves the source must eventually get
+to the sink*. Each product ends up with a flow weight:
+
+```
+W(v_i) = sum over k of f(v_i,k)      f is the weight of the flow
 ```
 
-**The idea I am taking from this paper, and it changed my design.** Their
-`ContextualFeatures` class. Price, place and brand are not properties of a
-product by itself. They describe *a product as sold somewhere*. The same cream
-in a global catalogue and in a Beirut pharmacy is in two different situations.
+The higher the flow weight, the stronger the semantic relation between the
+user's problem and that product.
 
-I had these sitting flat in my spreadsheet as ordinary columns:
+#### Results
 
-| My column | Values | Where it belongs |
-|---|---|---|
-| `price_tier` (I should rename this) | 3 bands | under `ContextualFeature` |
-| `sold_by_shops` | 9 Lebanese shops | under `ContextualFeature` |
-| `country` | 55 | under `ContextualFeature` |
-| `source_category` | Global, Lebanese retail, Lebanese origin, Both | under `ContextualFeature` |
+Their worked example produces a flow weight per product:
 
-For a Lebanese system this is not a small detail. Availability *is* the
-product's context, and it is the whole reason my dataset exists.
+| Product | Flow weight | | Product | Flow weight |
+|---|---|---|---|---|
+| 8 | **0.70** | | 3 | 0.53 |
+| 7 | 0.60 | | 5 | 0.52 |
+| 9 | 0.60 | | 2 | 0.45 |
+| 4 | 0.58 | | 1 | 0.38 |
 
-**What I leave:** the question and answer conversation, and Ford Fulkerson. My
-products already carry scores for availability, price and evidence strength, so
-a filter does the same work with far less machinery.
+Recommendation is simply that list in descending order.
 
-**Their weak point, which is my strength.** Their ingredients are stored as
-plain text with no register behind them. Nothing in their ontology can say an
-ingredient is restricted under EU law. Mine can, for 99.2 percent of products
-that have a formula.
+**How they evaluated it.** Precision, recall and F measure. They note the
+tension honestly: making the recommendation set larger raises recall and lowers
+precision, so F measure is used because it weights both equally.
+
+They then introduce a threshold **alpha**, the flow weight above which a
+product is recommended, and run an experiment to choose it, reporting how
+precision, recall and F measure move as alpha changes.
+
+**What is missing from their results, and I should notice it.** They report the
+shape of the relationship but no dataset size, no number of users, and no
+comparison against a baseline. The claim that the system is "more accurate than
+other related works" is not supported by a table anywhere in the paper.
+
+#### What I take, and what I leave
+
+| Take | Why |
+|---|---|
+| **The eight task methodology** | It is a checklist. Task 1, a glossary of terms with synonyms, is exactly what my `benefits` and `concerns` columns need, since "Hydrating" and "Hydration" are the same concept |
+| **`ContextualFeatures`** | Their class for `PlaceZone`, `AgeLevel`, `CosmeticsBrand`, `Season`, `PriceRange`. Price and place describe a product *as sold somewhere*, not the product itself. My `price_tier`, `sold_by_shops`, `country` and `source_category` all belong there |
+| **Tuning a threshold and reporting it** | When I score products I should show how the cutoff was chosen, not just assert one |
+
+| Leave | Why |
+|---|---|
+| Taxonomic CCBR | No user facing system yet, and no user study |
+| Ford Fulkerson | Heavier than I need. My products already carry availability, price and evidence level, so a weighted filter does the same job |
+
+**Their weak point, which is my strength.** Ingredients are stored as
+`hasIngredients` and `hasIngValue`, free text and a number, with no register
+behind them. Nothing in their ontology can say an ingredient is restricted
+under EU law. Mine can, for 99.2 percent of products that have a formula.
 
 ---
 
 ### 3.3 Serna et al. (2021) and Gabriel et al. (2023): OntoCosmetic
-`papers/Towards an ontology-based...pdf` and `papers/Chapter-ESCAPE-33-FINAL.pdf`
-and the ontology file itself, `OntoCosmetic-30-withoutRules.owl`
+`papers/Towards an ontology-based decision support system...pdf`
+`papers/Chapter-ESCAPE-33-FINAL.pdf`
+`papers/OntoCosmetic-30-withoutRules.owl`
+Universite de Lorraine (ERPI-ENSGSI and LRGP), with Universidad Nacional de
+Colombia
 
-I now have their actual OWL file, so I can describe it from the file rather
-than from the paper.
+Two papers, one ontology, two years apart. The first builds it, the second
+turns it into software.
+
+#### Paper 1, Serna et al. (2021): building the knowledge base
+
+**Methodology.** They built the knowledge base out of four kinds of material,
+combined deliberately rather than scraped:
+
+| Building block | What it holds | Example from the paper |
+|---|---|---|
+| General subproblems | physicochemical properties to promote or limit | achieving shear thinning or thixotropic behaviour |
+| General solution strategies | a route to a goal, not yet tied to a compound | implementing a steric surfactant system |
+| Ingredient databases | typed by function | emollients, surfactants, preservatives, actives |
+| Heuristics | rules connecting ingredients to the above | |
+
+**Technique.** Emulsion science principles plus expert knowledge, encoded as
+heuristics with thresholds. Their file has `hasHeuristicHighThreshold`,
+`hasHeuristicLowThreshold` and `hasHeuristicSource`, so every rule records the
+numbers it fires on and where the rule came from. That last one is provenance,
+in a formulation ontology.
+
+**Results.** A demonstration, not an evaluation: they design a moisturising
+cream with it. They list four intended uses: analysing solution strategies,
+supporting reformulation and ingredient substitution, designing a new product,
+and representing a design graphically.
+
+#### Paper 2, Gabriel et al. (2023): Formultools
+
+**Methodology.** This one is about how the software was designed, and it is
+more rigorous than the first:
+
+| Step | What they did |
+|---|---|
+| Design approach | the five planes user centred design method (Garrett, 2011) |
+| Who was involved | co-design between cosmetics experts and computer scientists |
+| How it developed | iteratively, with usability tests between iterations |
+| How each iteration was measured | the **AttrakDiff** questionnaire (Lallemand et al., 2015), a standard instrument for user experience |
+| When it stopped | when the problems found by non expert testers were resolved |
+
+**Technique.** A cross platform mobile application sitting on OntoCosmetic. It
+supports three decisions:
+
+1. screening ingredients by their properties
+2. selecting ingredients against multiple criteria, meaning performance, origin
+   and price together
+3. evaluating a candidate formulation against the design heuristics
+
+They cite the Analytic Hierarchy Process (Saaty, 1987) for handling the
+multiple criteria.
+
+**Results, and this is the honest part.** The tool works and performs its three
+functions. But the conclusion states plainly that **it had not yet been tested
+with experts at the time of publication**: "in a near future, it will be tested
+with experts and improved for its subsequent application in real design cases."
+
+So neither OntoCosmetic paper reports an evaluation against ground truth. One
+is a case study, the other is a usability process with the expert evaluation
+still pending. Worth knowing before I cite either as evidence that ontology
+based tools work.
+
+#### What is actually in the file
+
+I have the OWL, so these numbers are counted rather than quoted:
 
 | | |
 |---|---|
@@ -185,40 +337,31 @@ than from the paper.
 | Object properties | 26 |
 | Data properties | 20 |
 | Individuals already filled in | 279 |
-| Base address | `https://purl.org/ontocosmetic` |
+| Address | `https://purl.org/ontocosmetic` |
 
-**What it is for.** Helping a chemist *design* a cream. Not helping a person
-*choose* one. Once I opened the file that became very clear:
+Its classes are `HLB`, `DropletSize`, `Rheology`, `AqueousThickeners`,
+`OWCosmeticEmulsion`, `HeuristicForSurfactant`, `MeltingPoint`,
+`Emollient_Dosage`. This is a tool for making a cream stable, not for choosing
+one in a pharmacy.
 
-```mermaid
-graph TB
-    ING["<b>Ingredient types</b><br/>Emollient · Surfactant · Thickener<br/>Active · Preservative · UvFilter<br/>Humectant · Antioxidant · Stabilizer"]
-    EMU["<b>Emulsion science</b><br/>HLB · Rheology · Viscosity<br/>DropletSize · Polarity · Phase"]
-    HEU["<b>Heuristics</b><br/>HeuristicFacialCream<br/>HeuristicSunCream<br/>HeuristicForSurfactant"]
-    FOR["<b>Formulation</b><br/>ingredients plus dosage"]
-    ING --> FOR
-    EMU --> FOR
-    HEU --> FOR
-```
+#### What I take, and what I leave
 
-Classes like `HLB`, `DropletSize`, `AqueousThickeners`, `OWCosmeticEmulsion`
-and `HeuristicForSurfactant` are about how to make an emulsion stable. I have
-none of that data, and I never will, because manufacturers do not publish
-droplet sizes or dosages.
+| Take | Why |
+|---|---|
+| The **ingredient type names**: `Emollient`, `Surfactant`, `Thickener`, `Active`, `Preservative`, `UvFilter`, `Humectant`, `Antioxidant`, `Stabilizer`, `PHRegulator` | I already hold ingredient functions from CosIng on 92.7 percent of products. Using their names avoids inventing a third vocabulary. Although since CosIng is the Commission and OntoCosmetic is a secondary source, taking the names straight from CosIng is the cleaner argument |
+| The split between `ProductProperty` and `IngredientProperty` | I was mixing them. `spf` and `size_ml` belong to the product. Function and restriction belong to the ingredient and are inherited from the register |
+| `hasOrigin`, natural or synthetic | People ask about this constantly. My `free_from` column is a crude version |
+| `hasHeuristicSource` | Every rule records where it came from. That is the same instinct as my evidence levels, applied to rules instead of claims |
 
-**What I take from the file anyway, and these are real:**
+| Leave | Why |
+|---|---|
+| The whole emulsion science branch | HLB, droplet size, rheology, dosage. Manufacturers do not publish any of it and I never will have it |
+| Importing the file | 116 classes to use ten of them |
 
-| From OntoCosmetic | What it is | How I use it |
-|---|---|---|
-| `Ingredient_Type` hierarchy: `Emollient`, `Surfactant`, `Thickener`, `Active`, `Preservative`, `UvFilter`, `Humectant`, `Antioxidant`, `Stabilizer`, `PHRegulator` | a functional classification of ingredients | I already hold this. CosIng gives me the function of every ingredient, on 92.7 percent of products. I can map my functions onto their type names and reuse their vocabulary rather than invent one |
-| `hasINCIcode` | a data property holding the INCI name | Confirms INCI is the right key to join on, which is what I did |
-| `hasOrigin` (natural or synthetic) | where an ingredient comes from | People ask about this constantly. My `free_from` column is a rough version of the same idea |
-| `hasPricePerKilogram` | price as a property of an ingredient | Shows price belongs in the model, not outside it |
-| The split between `ProductProperty` and `IngredientProperty` | two different kinds of property | I have been mixing them. `spf` and `size_ml` belong to the product. Function and restriction belong to the ingredient and are inherited from CosIng |
-
-**Decision: cite it, borrow the ingredient type names, do not import the file.**
-Importing 116 classes to use 10 of them would bring a large amount of emulsion
-chemistry into an ontology about buying skincare in Beirut.
+**The sentence for my supervisors.** OntoCosmetic is the closest published
+cosmetics ontology, so I read it and opened the file. It models formulation
+chemistry for a designer. I model retail availability for a buyer. I borrow its
+ingredient classification and cite it, and I do not import it.
 
 ---
 
@@ -234,6 +377,41 @@ because it is the only one that shows the mechanism I had not understood.
 user gives four things: skin type, skin tone, which country they live in, and
 how complicated a routine they are willing to follow. The system returns a
 routine.
+
+#### Methodology: middle out, and it is honest about being messy
+
+They state the approach plainly: **middle out**, meaning start with the
+concepts you are sure of and work outward in both directions, towards the
+abstract and towards the specific, rather than top down or bottom up.
+
+| Step | What happened |
+|---|---|
+| 1 | One team member built a base ontology with the main classes and properties |
+| 2 | A Sephora review CSV was found, which **widened the scope** and forced new classes |
+| 3 | Classes and properties were added to fit the new data |
+| 4 | A second CSV, on the countries with Sephora shops, was folded in the same way |
+| 5 | More properties were added to join the two sources together |
+
+They describe it as iterative. That matches my situation exactly: I did not
+know my final columns when I started either, and my scope widened when the
+Lebanese origin products arrived.
+
+**Size of the result:** 36 classes, 6 object properties, 6 data properties.
+Small, and it still does something.
+
+#### Technique: OntoRefine, GraphDB, DBpedia, SPARQL
+
+| Tool | Used for |
+|---|---|
+| **OntoRefine** | turning the scraped Sephora CSV into RDF, mapping columns to classes |
+| **GraphDB** | holding the graph and running the queries |
+| **DBpedia** | pulled in through an external SPARQL endpoint. `dbr:Czech_Republic` gave them the country, and the latitude and longitude of its capital for the map |
+| **SPARQL** | the recommendation itself is a set of queries, not code |
+| **Class restrictions** | products are placed in skin type classes by a rule, not by hand |
+
+The DBpedia step is the one to notice. They did not type country data. They
+linked to something that already had it, and got coordinates for free. That is
+what reusing vocabulary actually looks like in practice.
 
 **Their classes:**
 
@@ -261,6 +439,28 @@ routine.
 | `hasRating` | stars |
 | `hasOilyScore`, `hasDryScore`, `hasNormalScore`, `hasCombinationScore` | a decimal per skin type |
 | `hasSephoraWebPage` | the shop link for that country |
+
+#### Results
+
+Their output for one user is **9 recommended products**, three per category,
+plus the Sephora page for that user's country and whether there is a physical
+shop.
+
+They report no accuracy, no precision, no user study. The outcome section
+describes one worked example and admits the interface was rushed, showing full
+URIs instead of product names.
+
+**Their three stated limitations, which I should read carefully because two of
+them are my opening:**
+
+| Their limitation | What it means for me |
+|---|---|
+| 1. Every product in `Oily Skin Products` has a rating of exactly 5.0, so there is no way to rank within the class. The same top three come out every time | A defined class puts products in a set but does not order them. I need a separate ranking signal, and availability and price in Lebanon are mine |
+| 2. A product with a single 1.0 review can be recommended ahead of products known to score 5.0, because the two selection paths are not comparable | Thin evidence beating strong evidence. My level columns exist precisely so that a claim with one weak source is not treated as equal to a manufacturer statement |
+| 3. **"class restrictions based on ingredients could be developed. This would ensure a more symbolic and chemical approach, compared to the statistical one that is currently employed"** | This is my contribution, written as future work in somebody else's paper. Their classes are built on review scores. Mine are built on the formula, checked against the EU register on 99.2 percent of products with an ingredient list |
+
+That third one is worth saying out loud in the defence. The gap they name is
+the gap the dataset fills.
 
 ### The idea I am taking, and it is the important one in this whole document
 
