@@ -1,0 +1,275 @@
+# =====================================================================
+# skincare-profile.ttl
+#
+# My own ontology file. Small on purpose.
+#
+# It does three things:
+#   1. imports the four vocabularies I reuse, by address
+#   2. declares my classes and properties
+#   3. shows the two ideas I took from the papers, as working examples:
+#        a defined class, so the reasoner decides membership
+#        evidence levels, so a manufacturer's claim and my own guess
+#        are not the same kind of fact
+#
+# Open it in Protege. Run HermiT. Nothing here is generated; the 12,629
+# products go in a separate file that a script writes.
+# =====================================================================
+
+@prefix skc:     <https://w3id.org/skincare-lb#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema:  <https://schema.org/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/skincare-lb>
+    a owl:Ontology ;
+    dcterms:title "Skincare products in Lebanon" ;
+    rdfs:comment """Products available in the Lebanese market, their
+        ingredients linked to the EU CosIng register, and the source of every
+        claim.""" ;
+    owl:imports <https://schema.org/> ,
+                <http://www.w3.org/ns/prov#> ,
+                <http://www.w3.org/2004/02/skos/core#> .
+
+# ---------------------------------------------------------------------
+# 1. THE PRODUCT
+# schema:Product already exists and every search engine reads it, so my
+# Product is a kind of theirs rather than a new idea.
+# ---------------------------------------------------------------------
+
+skc:Product a owl:Class ;
+    rdfs:subClassOf schema:Product ;
+    rdfs:label "Product" ;
+    rdfs:comment "One skincare product. 12,629 of them." .
+
+skc:Brand a owl:Class ;
+    rdfs:subClassOf schema:Brand ;
+    rdfs:label "Brand" ;
+    rdfs:comment "1,463 of them." .
+
+# An Offer is one shop selling one product at one price on one date.
+# Without this a cream sold by four Beirut shops needs four product rows.
+skc:Offer a owl:Class ;
+    rdfs:subClassOf schema:Offer ;
+    rdfs:label "Offer" .
+
+skc:Retailer a owl:Class ;
+    rdfs:subClassOf schema:Organization ;
+    rdfs:label "Retailer" ;
+    rdfs:comment "Nine Lebanese online shops." .
+
+# ---------------------------------------------------------------------
+# 2. CONTEXT
+# From Moe and Aung (2014). Price, place and brand are not properties of
+# a product on its own. They describe a product as sold somewhere.
+# ---------------------------------------------------------------------
+
+skc:ContextualFeature a owl:Class ;
+    rdfs:label "Contextual feature" ;
+    rdfs:comment "Describes a product as available in a place, not the product itself." .
+
+skc:PriceBand   a owl:Class ; rdfs:subClassOf skc:ContextualFeature .
+skc:Country     a owl:Class ; rdfs:subClassOf skc:ContextualFeature .
+skc:Availability a owl:Class ; rdfs:subClassOf skc:ContextualFeature ;
+    rdfs:comment "Global, Lebanese retail, Lebanese origin, or Both." .
+
+# ---------------------------------------------------------------------
+# 3. INGREDIENTS
+# Function names borrowed from OntoCosmetic (Serna et al. 2021) so I am
+# not inventing a vocabulary that already exists.
+# ---------------------------------------------------------------------
+
+skc:Ingredient a owl:Class ;
+    rdfs:label "Ingredient" ;
+    rdfs:comment "13,699 distinct names across the dataset." .
+
+skc:IngredientFunction a owl:Class ;
+    rdfs:subClassOf skos:Concept ;
+    rdfs:label "Ingredient function" ;
+    rdfs:comment "What an ingredient does. Taken from the CosIng register." .
+
+skc:Emollient    a skc:IngredientFunction ; skos:prefLabel "Emollient" .
+skc:Surfactant   a skc:IngredientFunction ; skos:prefLabel "Surfactant" .
+skc:Thickener    a skc:IngredientFunction ; skos:prefLabel "Thickener" .
+skc:Active       a skc:IngredientFunction ; skos:prefLabel "Active" .
+skc:Preservative a skc:IngredientFunction ; skos:prefLabel "Preservative" .
+skc:Humectant    a skc:IngredientFunction ; skos:prefLabel "Humectant" .
+skc:UvFilter     a skc:IngredientFunction ; skos:prefLabel "UV filter" .
+
+# The EU register entry behind an ingredient.
+skc:CosIngEntry a owl:Class ;
+    rdfs:label "CosIng entry" ;
+    rdfs:comment "One of the 28,573 entries in the European Commission register." .
+
+skc:RestrictedIngredient a owl:Class ;
+    rdfs:subClassOf skc:Ingredient ;
+    rdfs:comment """An ingredient the regulation restricts. The restriction is a
+        pointer into an annex, for example Annex V entry 29 for phenoxyethanol,
+        which is a permitted preservative with a concentration limit. It does
+        not mean the product is unlawful.""" .
+
+skc:DeclarableAllergen a owl:Class ;
+    rdfs:subClassOf skc:Ingredient ;
+    rdfs:comment "One of the 26 fragrance allergens the EU requires to be named on the label." .
+
+# ---------------------------------------------------------------------
+# 4. SKIN
+# ---------------------------------------------------------------------
+
+skc:SkinType a owl:Class ; rdfs:subClassOf skos:Concept ; rdfs:label "Skin type" .
+skc:Oily a skc:SkinType ; skos:prefLabel "Oily" .
+skc:Dry  a skc:SkinType ; skos:prefLabel "Dry" .
+skc:Combination a skc:SkinType ; skos:prefLabel "Combination" .
+skc:Normal a skc:SkinType ; skos:prefLabel "Normal" .
+skc:AllSkinTypes a skc:SkinType ; skos:prefLabel "All" .
+
+skc:Sensitivity a owl:Class ; rdfs:subClassOf skos:Concept .
+skc:Sensitive a skc:Sensitivity ; skos:prefLabel "Sensitive" .
+skc:Resistant a skc:Sensitivity ; skos:prefLabel "Resistant" .
+
+skc:SkinConcern a owl:Class ; rdfs:subClassOf skos:Concept ; rdfs:label "Skin concern" .
+skc:Benefit a owl:Class ; rdfs:subClassOf skos:Concept ; rdfs:label "Benefit" .
+
+# ---------------------------------------------------------------------
+# 5. WHO SAID IT
+# From my own dataset. PROV-O gives the vocabulary for saying it.
+# ---------------------------------------------------------------------
+
+skc:Claim a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Claim" ;
+    rdfs:comment "One assertion about a product, such as suits dry skin." .
+
+skc:EvidenceLevel a owl:Class ;
+    rdfs:subClassOf skos:Concept ;
+    rdfs:label "Evidence level" .
+
+skc:Level1 a skc:EvidenceLevel ; skos:prefLabel "The manufacturer stated it" .
+skc:Level2 a skc:EvidenceLevel ; skos:prefLabel "A retailer stated it" .
+skc:Level3 a skc:EvidenceLevel ; skos:prefLabel "A weaker source stated it" .
+skc:Level4 a skc:EvidenceLevel ; skos:prefLabel "Inferred from the formula" .
+
+# ---------------------------------------------------------------------
+# 6. THE USER
+# ---------------------------------------------------------------------
+
+skc:UserProfile a owl:Class ; rdfs:label "User profile" .
+
+# ---------------------------------------------------------------------
+# 7. PROPERTIES
+# ---------------------------------------------------------------------
+
+skc:hasIngredient a owl:ObjectProperty ;
+    rdfs:domain skc:Product ; rdfs:range skc:Ingredient .
+
+skc:hasFunction a owl:ObjectProperty ;
+    rdfs:domain skc:Ingredient ; rdfs:range skc:IngredientFunction .
+
+skc:registeredAs a owl:ObjectProperty ;
+    rdfs:domain skc:Ingredient ; rdfs:range skc:CosIngEntry .
+
+skc:suitableFor a owl:ObjectProperty ;
+    rdfs:domain skc:Product ; rdfs:range skc:SkinType .
+
+skc:addresses a owl:ObjectProperty ;
+    rdfs:domain skc:Product ; rdfs:range skc:SkinConcern .
+
+# Deliberately separate from addresses. A product can help one concern and
+# make another worse, and collapsing both loses what a recommender needs.
+skc:mayWorsen a owl:ObjectProperty ;
+    rdfs:domain skc:Product ; rdfs:range skc:SkinConcern .
+
+skc:hasBenefit a owl:ObjectProperty ;
+    rdfs:domain skc:Product ; rdfs:range skc:Benefit .
+
+skc:offersProduct a owl:ObjectProperty ;
+    rdfs:domain skc:Offer ; rdfs:range skc:Product .
+
+skc:soldBy a owl:ObjectProperty ;
+    rdfs:domain skc:Offer ; rdfs:range skc:Retailer .
+
+skc:aboutProduct a owl:ObjectProperty ;
+    rdfs:domain skc:Claim ; rdfs:range skc:Product .
+
+skc:hasEvidenceLevel a owl:ObjectProperty ;
+    rdfs:domain skc:Claim ; rdfs:range skc:EvidenceLevel .
+
+skc:avoidsIngredient a owl:ObjectProperty ;
+    rdfs:domain skc:UserProfile ; rdfs:range skc:Ingredient .
+
+skc:hasSkinType a owl:ObjectProperty ;
+    rdfs:domain skc:UserProfile ; rdfs:range skc:SkinType .
+
+skc:priceUSD a owl:DatatypeProperty ;
+    rdfs:domain skc:Offer ; rdfs:range xsd:decimal .
+
+skc:priceLBP a owl:DatatypeProperty ;
+    rdfs:domain skc:Offer ; rdfs:range xsd:decimal .
+
+skc:seenOn a owl:DatatypeProperty ;
+    rdfs:domain skc:Offer ; rdfs:range xsd:date ;
+    rdfs:comment "Lebanese prices move quickly, so every price carries its date." .
+
+skc:cosingCoverage a owl:DatatypeProperty ;
+    rdfs:domain skc:Product ; rdfs:range xsd:decimal ;
+    rdfs:comment "Share of this product's ingredients found in the EU register." .
+
+# ---------------------------------------------------------------------
+# 8. DEFINED CLASSES
+#
+# This is the idea from the VU Amsterdam skincare ontology, and it is the
+# reason an ontology is worth more than a spreadsheet.
+#
+# I do not tag products as safe for sensitive skin. I write down what the
+# phrase means, and the reasoner works out which products qualify. If a
+# formula is corrected tomorrow, membership corrects itself.
+# ---------------------------------------------------------------------
+
+skc:SensitiveSafeProduct a owl:Class ;
+    rdfs:label "Product with no declarable allergen" ;
+    rdfs:comment """Defined, not asserted. Any product that contains none of the
+        26 EU declarable fragrance allergens belongs here automatically.""" ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            skc:Product
+            [ a owl:Restriction ;
+              owl:onProperty skc:hasIngredient ;
+              owl:allValuesFrom [ a owl:Class ;
+                  owl:complementOf skc:DeclarableAllergen ] ]
+        )
+    ] .
+
+skc:AvailableInLebanon a owl:Class ;
+    rdfs:label "Available in Lebanon" ;
+    rdfs:comment """Defined. Any product with at least one Offer belongs here.
+        This is the class the whole project exists for.""" ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            skc:Product
+            [ a owl:Restriction ;
+              owl:onProperty [ owl:inverseOf skc:offersProduct ] ;
+              owl:someValuesFrom skc:Offer ]
+        )
+    ] .
+
+skc:ManufacturerStatedProduct a owl:Class ;
+    rdfs:label "Claim came from the manufacturer" ;
+    rdfs:comment """Defined. Products whose suitability claim carries evidence
+        level 1. Lets a query exclude my own inferences in one step.""" ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            skc:Product
+            [ a owl:Restriction ;
+              owl:onProperty [ owl:inverseOf skc:aboutProduct ] ;
+              owl:someValuesFrom [ a owl:Restriction ;
+                  owl:onProperty skc:hasEvidenceLevel ;
+                  owl:hasValue skc:Level1 ] ]
+        )
+    ] .

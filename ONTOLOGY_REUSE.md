@@ -222,11 +222,105 @@ chemistry into an ontology about buying skincare in Beirut.
 
 ---
 
-### 3.4 The paper I could not read
+### 3.4 Abesova, Hajkova, Ramadan and Zdych (2023), Skincare Ontology
+`papers/Skincare_Ontology_for_Personalised_Recommendation.pdf`
+Vrije Universiteit Amsterdam, Knowledge and Data course, Group 31
 
-The Academia link would not open for me. It returns a 404 without a logged in
-session, both through a plain fetch and through a browser. I am not going to
-summarise a paper I have not read. If I export the PDF it goes here.
+**First, what this is.** A student final project, not a peer reviewed paper. I
+should say that when I cite it. It is still the most useful of the five for me,
+because it is the only one that shows the mechanism I had not understood.
+
+**What they built.** A recommender over Sephora product and review data. The
+user gives four things: skin type, skin tone, which country they live in, and
+how complicated a routine they are willing to follow. The system returns a
+routine.
+
+**Their classes:**
+
+| Class | Values |
+|---|---|
+| `Category` | Cleanser, Moisturizer, Treatment. Treatment splits into Exfoliant (Chemical, Physical), Serum, Toner, and SPF sits under Moisturizer |
+| `Product` | with four subclasses: Oily, Dry, Normal and Combination Skin Products |
+| `Skin Type` | Oily, Dry, Normal, Combination |
+| `Skin Tone` | Porcelain, Fair, Light, Medium, Olive, Tan, Deep, Dark, Ebony |
+| `Brand`, `Country`, `Rating Stars`, `Review Id` | |
+
+**Their properties:**
+
+| Object property | Links |
+|---|---|
+| `hasBrand` | Product to Brand |
+| `hasCategory` | Product to Category |
+| `hasSkinType` | Review to Skin Type |
+| `hasSkinTone` | Review to Skin Tone |
+| `aboutProduct` | Review to Product |
+| `hasReviewId` | Product to Review |
+
+| Data property | Value |
+|---|---|
+| `hasRating` | stars |
+| `hasOilyScore`, `hasDryScore`, `hasNormalScore`, `hasCombinationScore` | a decimal per skin type |
+| `hasSephoraWebPage` | the shop link for that country |
+
+### The idea I am taking, and it is the important one in this whole document
+
+They do not tag a product as being for oily skin. They **define what the phrase
+means** and let the reasoner work out which products qualify:
+
+```
+Oily Skin Products  is equivalent to  hasOilyScore value 5
+```
+
+This is called a **defined class** (as opposed to a class you assign by hand).
+The difference in practice:
+
+| Without it | With it |
+|---|---|
+| I write "suits oily skin" on 4,000 rows | I write the rule once |
+| If a formula is corrected, the tag stays wrong until I remember to fix it | Membership recalculates itself |
+| A reviewer has to trust my tagging | A reviewer reads one line and can check it |
+
+**This is the answer to "why not just use the spreadsheet".** My spreadsheet
+can filter. It cannot hold a definition. Three defined classes are already
+written into `vocabularies/skincare-profile.ttl`:
+
+| Defined class | Means |
+|---|---|
+| `SensitiveSafeProduct` | any product containing none of the 26 EU declarable allergens. The reasoner finds them, I do not list them |
+| `AvailableInLebanon` | any product with at least one Offer from a Lebanese shop. The class this whole project exists for |
+| `ManufacturerStatedProduct` | any product whose suitability claim carries evidence level 1 |
+
+**Three more things I take:**
+
+| From them | Why |
+|---|---|
+| **Skin tone as a separate dimension from skin type** | I do not have it at all. Nine values, and it matters for sun care and pigmentation products, which is a large part of the Lebanese market |
+| **A score per skin type instead of one label** | My `skin_type` holds one value. A decimal for each of the four would let a product be mostly for oily skin and partly for combination, which is closer to the truth |
+| **Routine complexity as a user input** | People abandon routines that are too long. A three step routine for a beginner is a real filter, and I could derive it from product type |
+
+**Their tools, and one I did not know about:**
+
+| Tool | What it does |
+|---|---|
+| **OntoRefine** | part of GraphDB. Maps a CSV file to RDF triples through a visual interface, instead of writing a conversion script. This is exactly my step 4, and I should try it before writing Python |
+| **SPARQL** | the query language. Their report includes the actual queries |
+| **geo** and **dbo** vocabularies | they queried DBpedia, an open database built from Wikipedia, to get capital city coordinates and draw a map of which countries have a Sephora |
+
+That last one is directly useful to me. They used `Country` plus geography to
+answer "can this person buy it where they live". That is my whole problem,
+except that mine is one country and nine shops rather than a global map.
+
+**Where their work is weaker than mine, and it is a large gap:** their ontology
+has **no ingredients in it at all**. Products, brands, ratings, skin scores,
+but nothing about what is inside the bottle. So it cannot say why a product
+suits oily skin, only that reviewers with oily skin rated it well. Mine holds
+13,699 ingredients, 99.2 percent of them resolved against the EU register.
+
+**One thing I respect about the report.** They state a mistake in their own
+work: `Product hasCategory Category` was never implemented, they used
+`rdf:type` instead, and they found out too late to fix it. They wrote it down
+rather than hiding it. I have made more mistakes than that in this project and
+I should be equally direct about them.
 
 ---
 
@@ -343,6 +437,20 @@ small is what lets each file be reviewed on its own.
 Dropped: ChEBI, SNOMED CT, GS1 GPC, CHEMINF, OBI, eNanoMapper, OntoCAPE, UMLS,
 DermO, SPO. Same reason each time. A large import and nothing in it I can use.
 
+**The files are in `vocabularies/`.** I do not keep copies of the four
+vocabularies themselves, because they are maintained by other people and an
+ontology imports them by address rather than by copying them.
+`vocabularies/fetch_vocabularies.py` downloads them if I want to read one.
+
+What is in there and is mine:
+
+| File | What it is |
+|---|---|
+| `vocabularies/skincare-profile.ttl` | my ontology. 27 classes, 13 object properties, 4 data properties, and the three defined classes below. Open it in Protégé |
+| `vocabularies/README.md` | the four vocabularies, their addresses and their licences |
+| `vocabularies/fetch_vocabularies.py` | downloads them locally when needed |
+| `papers/OntoCosmetic-30-withoutRules.owl` | the OntoCosmetic file, for reference, not imported |
+
 ---
 
 ## 6. How I will proceed, step by step
@@ -352,7 +460,7 @@ DermO, SPO. Same reason each time. A large import and nothing in it I can use.
 | 1 | Write the concepts ontology by hand. 5 skin types, 7 concerns, 14 benefits, and the ingredient function names borrowed from OntoCosmetic | Protégé | It fits on two printed pages |
 | 2 | Run the reasoner on just that file | HermiT inside Protégé | No contradictions. For example nothing is both helped and worsened by the same ingredient function |
 | 3 | Take those two pages to a dermatologist and have them corrected | paper | The gap I admitted in section 3.1 is closed |
-| 4 | Write a Python script that reads `SKINCARE_FINAL.csv` and writes the product ontology | Owlready2 | 12,629 products load and the file opens in Protégé |
+| 4 | Turn `SKINCARE_FINAL.csv` into the product ontology | **OntoRefine** first (a visual CSV to RDF mapper inside GraphDB, which the VU group used), Owlready2 if that is not enough | 12,629 products load and the file opens in Protégé |
 | 5 | Never hand edit the product file | | I can regenerate it any time the dataset changes |
 | 6 | Write the user profile ontology | Protégé | It only holds what a person can tell me |
 | 7 | Write the bridge file that imports all three | Protégé | The reasoner runs over the whole thing without complaint |
@@ -442,7 +550,8 @@ Two things I will say myself before anyone asks me:
 | 3 | Serna, J. et al. (2021). *Towards an ontology-based decision support system for the design of emulsion based cosmetic products.* ECCE13. HAL hal-04674074 | `papers/Towards an ontology-based...pdf` |
 | 4 | Gabriel, A. et al. (2023). *Decision making software for cosmetic product design based on an ontology.* ESCAPE 33. DOI 10.1016/B978-0-443-15274-0.50316-4 | `papers/Chapter-ESCAPE-33-FINAL.pdf` |
 | 5 | OntoCosmetic ontology file, 116 classes | `papers/OntoCosmetic-30-withoutRules.owl` |
-| 6 | *Personalized Skincare Recommendation System Based on Ontology and User Preferences* (2025). ResearchGate 394583703 | not open access |
-| 7 | Noy, N.F. and McGuinness, D.L. (2001). *Ontology Development 101.* Stanford KSL-01-05 | |
-| 8 | European Commission (2009). *Regulation (EC) No 1223/2009 on cosmetic products* | |
-| 9 | W3C (2013). *PROV-O.* W3C (2009). *SKOS Reference.* schema.org vocabulary | |
+| 6 | Abesova, S., Hajkova, K., Ramadan, Y. and Zdych, M. *Skincare Ontology.* Vrije Universiteit Amsterdam, Knowledge and Data, Group 31. Student final project | `papers/Skincare_Ontology_for_Personalised_Recommendation.pdf` |
+| 7 | *Personalized Skincare Recommendation System Based on Ontology and User Preferences* (2025). ResearchGate 394583703 | not open access |
+| 8 | Noy, N.F. and McGuinness, D.L. (2001). *Ontology Development 101.* Stanford KSL-01-05 | |
+| 9 | European Commission (2009). *Regulation (EC) No 1223/2009 on cosmetic products* | |
+| 10 | W3C (2013). *PROV-O.* W3C (2009). *SKOS Reference.* schema.org vocabulary | |

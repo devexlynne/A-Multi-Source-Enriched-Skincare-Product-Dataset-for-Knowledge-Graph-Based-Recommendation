@@ -1,0 +1,8 @@
+# downloaded copies of vocabularies maintained by other people.
+# fetch_vocabularies.py gets them when needed.
+schemaorg.ttl
+prov.ttl
+prov-o.ttl
+skos.rdf
+skos.ttl
+dcterms.ttl
