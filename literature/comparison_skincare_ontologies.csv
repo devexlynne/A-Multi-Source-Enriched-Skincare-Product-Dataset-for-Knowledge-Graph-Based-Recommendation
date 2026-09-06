@@ -1,16 +1,13 @@
-﻿What I am comparing,Moe & Aung 2014,OntoCosmetic 2021/23,Hansanie 2024,Abesova 2023,bit-Tech 2025,Utari 2023,TOXIN 2025,HaCKG 2025,THIS THESIS
-Peer reviewed,Weak venue,Yes,Yes,"No, student project",Yes,Yes,Yes,Yes,To be
-Ontology publicly downloadable,No,"YES, purl.org",No,No,Unknown,No,YES,Unknown,"Planned, w3id + Zenodo"
-Named building methodology,"Eight tasks, unnamed",None,None,Middle out,METHONTOLOGY,METHONTOLOGY,None,None,MOMo + LOT
-How many products,Not reported,279 individuals,Not reported,Sephora subset,"3,800",62,None,Cosmetics set,"12,629"
-Ingredients linked to a legal register,No,No,No,No,Own allergen class,No,"YES, SCCS",No,"YES, CosIng 28,573 entries"
-How the data got in,Not reported,By hand,Not reported,OntoRefine,Scraping,Not reported,R2RML,Not reported,RML / Morph-KGC
-Reasoner,None,SWRL in Protege,Pellet,Class restrictions,Jena Fuseki,SPARQL only,Not stated,None,HermiT + SHACL
-SPARQL,No,No,Via Owlready2,"YES, it is the mechanism",Yes,Yes,Yes,No,Yes
-Links to outside data,No,No,No,DBpedia,No,No,"OBO, KEGG, UniProt",No,"Wikidata, CosIng, DermO"
-Records where each claim came from,No,Rule sources only,No,No,No,No,Named graphs,No,"YES, 4 evidence levels + PROV-O"
-Price or availability modelled,A PriceRange class,Price as a criterion,No,Shop page link,No,No,No,No,"YES, two currencies, per shop, dated"
-Local market,No,No,No,No,Indonesia,Indonesia,No,No,LEBANON
-Neural component,No,No,CNN for acne,No,No,No,No,Graph attention network,"No, positioned as future work"
-Evaluated against ground truth,No,No,"Partly, 24-person survey",No,Unclear,SPARQL only,Use cases,Benchmarks,"Planned, four layers"
-What it is actually for,Cross-domain matching,Making a stable cream,Grading acne from a photo,Building a routine,Indonesian retail,Proof of concept,Animal-free risk assessment,Halal prediction,"Buying skincare in Lebanon, with a reason"
+﻿What I'm comparing,Moe 2014,OntoCosmetic 2021/23,Hansanie 2024,Abesova 2023,Indonesian 2025,Utari 2023,TOXIN 2025,HaCKG 2025,WHAT WE'RE DOING
+Is it properly peer reviewed,weak journal,yes,yes,"no, it's a student project",yes,yes,yes,yes,will be
+Can anyone actually download it,no,YES,no,no,don't know,no,YES,don't know,"yes, that's the plan"
+Did they follow a named method,"eight steps, unnamed",no,no,middle out,METHONTOLOGY,METHONTOLOGY,no,no,MOMo + LOT
+How many products,they never say,279,they never say,some Sephora ones,"3,800",62,none at all,some,"12,629"
+Ingredients tied to actual EU law,no,no,no,no,no,no,YES,no,"YES, all 28,573 CosIng entries"
+Do they say who claimed what,no,only for their rules,no,no,no,no,"yes, by source",no,"YES, four evidence levels"
+Do they know if you can buy it,"a price band, that's all",price as one criterion,no,a shop link,no,no,no,no,"YES, per shop, in two currencies"
+Which country's market,none,none,none,none,Indonesia,Indonesia,none,none,LEBANON
+Is there a neural bit,no,no,CNN reads your face,no,no,no,no,graph neural net,"no, that's future work"
+Did they properly test it,no baseline,no,asked 24 people,no,unclear,ran some queries,use cases,benchmarks,"yes, four different ways"
+What it's really for,matching problems to products,making a cream that doesn't split,grading acne from a photo,building a routine,Indonesian shopping,proving it can be done,animal-free safety testing,predicting halal,"buying skincare in Lebanon, with a reason"
+"The three green rows are the point. TOXIN has the EU law but not a single product. Everyone else has products and no law. And nobody at all writes down who made a claim, or checks whether you can buy the thing where you live.",,,,,,,,,

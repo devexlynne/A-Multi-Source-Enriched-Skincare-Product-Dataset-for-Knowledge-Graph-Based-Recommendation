@@ -13,7 +13,7 @@ the problem.
 
 | If you want | Open |
 |---|---|
-| **The simple version, for a supervisor meeting** | **[`ONTOLOGY_PAPERS.xlsx`](ONTOLOGY_PAPERS.xlsx)** — ten ontology papers, nine columns, two sheets. Start here |
+| **To show somebody** | **[`PAPERS_TABLE.xlsx`](PAPERS_TABLE.xlsx)** — all 59 papers, seven sheets. Open the "Head to head" sheet in a meeting |
 | The papers as a browsable table | [`papers.csv`](papers.csv) — GitHub renders this as a sortable table |
 | The same thing with every column | [`papers_full.csv`](papers_full.csv), 38 columns |
 | The formatted version for reading offline | [`PAPERS_TABLE.xlsx`](PAPERS_TABLE.xlsx), seven sheets |
@@ -48,10 +48,9 @@ the problem.
 | [`tools.csv`](tools.csv) | 17 tools, why each was chosen, what was rejected |
 | [`roadmap.csv`](roadmap.csv) | Six sprints, with the risk of skipping each |
 | [`gap_analysis.csv`](gap_analysis.csv) | Six gaps, what I do about each, and how defensible the claim is |
-| [`ONTOLOGY_PAPERS.xlsx`](ONTOLOGY_PAPERS.xlsx) | **The simple one.** Only the ten ontologies, written plainly, two sheets. This is the one to open in a meeting |
-| [`PAPERS_TABLE.xlsx`](PAPERS_TABLE.xlsx) | The full one. All 59 papers, 38 columns, seven sheets. Reference material, not meeting material |
-| [`build_papers_table.py`](build_papers_table.py) | Rebuilds the full spreadsheet. The data lives in this script, so the spreadsheet is reproducible rather than hand-edited |
-| [`build_simple_table.py`](build_simple_table.py) | Rebuilds the simple one |
+| [`PAPERS_TABLE.xlsx`](PAPERS_TABLE.xlsx) | All 59 papers, 38 columns, seven sheets. Start here, on the "Start here" sheet |
+| [`papers_data.py`](papers_data.py) | The paper text itself. Edit a cell here, rerun the builder, get a new spreadsheet |
+| [`build_papers_table.py`](build_papers_table.py) | Turns that data into the spreadsheet. Data and design are kept apart so either can change without touching the other |
 
 ### For the thesis
 
