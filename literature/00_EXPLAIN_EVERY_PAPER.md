@@ -56,7 +56,7 @@ Our 12,629 products turned into a graph would be the knowledge graph; the rules
 about what a Product is would be the ontology.
 
 **Triple.** The unit everything is made of. Three parts: subject, predicate,
-object. `Cetaphil Lotion — contains — Phenoxyethanol`. A million triples make a
+object. `Cetaphil Lotion ,  contains ,  Phenoxyethanol`. A million triples make a
 graph. There are no tables and no columns.
 
 **Class.** A kind of thing. `Product`, `Ingredient`, `Shop`.
@@ -521,7 +521,7 @@ in the review does it.
 
 ### Paper 2: the application
 
-They turned it into a phone app called Formultools, and this paper is more
+They turned it into a phone app called Formultools, and that paper is more
 rigorous than the first:
 
 | Step | What they did |
