@@ -1,0 +1,16 @@
+﻿What I am comparing,Moe & Aung 2014,OntoCosmetic 2021/23,Hansanie 2024,Abesova 2023,bit-Tech 2025,Utari 2023,TOXIN 2025,HaCKG 2025,THIS THESIS
+Peer reviewed,Weak venue,Yes,Yes,"No, student project",Yes,Yes,Yes,Yes,To be
+Ontology publicly downloadable,No,"YES, purl.org",No,No,Unknown,No,YES,Unknown,"Planned, w3id + Zenodo"
+Named building methodology,"Eight tasks, unnamed",None,None,Middle out,METHONTOLOGY,METHONTOLOGY,None,None,MOMo + LOT
+How many products,Not reported,279 individuals,Not reported,Sephora subset,"3,800",62,None,Cosmetics set,"12,629"
+Ingredients linked to a legal register,No,No,No,No,Own allergen class,No,"YES, SCCS",No,"YES, CosIng 28,573 entries"
+How the data got in,Not reported,By hand,Not reported,OntoRefine,Scraping,Not reported,R2RML,Not reported,RML / Morph-KGC
+Reasoner,None,SWRL in Protege,Pellet,Class restrictions,Jena Fuseki,SPARQL only,Not stated,None,HermiT + SHACL
+SPARQL,No,No,Via Owlready2,"YES, it is the mechanism",Yes,Yes,Yes,No,Yes
+Links to outside data,No,No,No,DBpedia,No,No,"OBO, KEGG, UniProt",No,"Wikidata, CosIng, DermO"
+Records where each claim came from,No,Rule sources only,No,No,No,No,Named graphs,No,"YES, 4 evidence levels + PROV-O"
+Price or availability modelled,A PriceRange class,Price as a criterion,No,Shop page link,No,No,No,No,"YES, two currencies, per shop, dated"
+Local market,No,No,No,No,Indonesia,Indonesia,No,No,LEBANON
+Neural component,No,No,CNN for acne,No,No,No,No,Graph attention network,"No, positioned as future work"
+Evaluated against ground truth,No,No,"Partly, 24-person survey",No,Unclear,SPARQL only,Use cases,Benchmarks,"Planned, four layers"
+What it is actually for,Cross-domain matching,Making a stable cream,Grading acne from a photo,Building a routine,Indonesian retail,Proof of concept,Animal-free risk assessment,Halal prediction,"Buying skincare in Lebanon, with a reason"

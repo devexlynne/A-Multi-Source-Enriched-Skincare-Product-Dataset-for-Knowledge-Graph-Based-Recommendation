@@ -1,0 +1,48 @@
+﻿Module,Kind,Name,What it means in plain language,Where it comes from,Which of my columns
+core,Class,SkinType,"Oily, Dry, Normal, Combination",Hansanie & Silva; Abesova,skin_type
+core,Class,Sensitivity,Sensitive or not,My dataset,sensitivity
+core,Class,SkinConcern,"Acne, dryness, redness, hyperpigmentation, wrinkles, dullness, pores, oiliness","Mine, to be ALIGNED TO DermO",concerns
+core,SKOS concept,Benefit,"Hydrating, brightening, soothing. These are labels people use, not logical classes, so SKOS not OWL",SKOS,benefits
+core,Class,IngredientFunction,"Emollient, humectant, preservative, UV filter, surfactant, antioxidant, solvent, viscosity controller, skin conditioning, fragrance, chelating agent",Names taken from CosIng; aligned to OntoCosmetic,ingredient_functions
+core,Class,RegulatoryStatus,"Prohibited (Annex II), Restricted (III), Permitted colorant (IV), preservative (V), UV filter (VI), Declarable allergen (the EU 26)",Regulation (EC) 1223/2009,restricted_ingredients
+core,Individual,Annex,"AnnexII to AnnexVI. These are specific entries, not kinds of thing, so individuals not classes",Noy & McGuinness test,restricted_ingredients
+core,Class,Authority,"European Commission, SCCS, and later the Lebanese Ministry of Health. A status is always granted BY somebody",Halal flavouring ontology pattern,"n/a, new"
+product,Class,Product,"The thing on the shelf. Subclasses: Cleanser, Moisturiser (with SunCare under it), Serum, Toner, Exfoliant (chemical and physical), Mask, EyeCare, Treatment",schema:Product; taxonomy from Abesova,product_type
+product,Class,Ingredient,"One individual per CosIng entry, identified by its register ID not by its name",CosIng,ingredients
+product,Class,IngredientListing,"REIFIED. An ingredient AT A POSITION in one product's list. Needed because INCI order is concentration order, and a plain triple has no room for the position",N-ary relation design pattern,"ingredients, ingredient_count"
+product,Class,Brand,The maker,"schema:Brand, linked to Wikidata",brand
+product,Class,Offer,"A price, from one shop, on one date. SEPARATE from the product, which is why one lotion can carry two Beirut prices",schema:Offer,"price_usd, price_lbp, price_seen_date"
+product,Class,Shop,Online or physical,schema.org + mine,"shops_in_lebanon, sold_by_shops"
+product,Class,Country,Where a brand or shop is,schema.org,country
+evidence,Class,Claim,"REIFIED. A statement about a product, carrying who said it, where, when, the exact sentence, and how much that source is worth. THIS IS THE CONTRIBUTION",PROV-O specialisation; precedent in O'Sullivan 2025,"skin_type_source, price_source, rating_source"
+evidence,Class,EvidenceLevel,"ManufacturerStated (1), RetailerStated (2), WeakSourceStated (3), FormulaInferred (4)",Mine,skin_type_source
+evidence,Class,prov:Agent,"Manufacturer, Retailer, InferenceProcedure. Whoever made the claim",PROV-O,all source columns
+lebanon,Class,LebaneseShop,A shop that actually sells here,Mine,shops_in_lebanon
+lebanon,Class,ConsumerNeed,"A need as an entity in its own right, not an attribute. Budget-constrained routine, single-shop routine, humid-season routine, occasion routine",AliCoCo (SIGMOD 2020),"new, the original claim"
+product,Object property,skc:hasListing,Links a product to one positioned ingredient entry,N-ary pattern,ingredients
+product,Object property,skc:listsIngredient,Which ingredient that entry refers to,Mine,ingredients
+product,Object property,skc:hasIngredient,"Shortcut from product straight to ingredient, so simple queries stay simple","Mine, inferred",ingredients
+core,Object property,skc:hasFunction,What an ingredient does,CosIng,ingredient_functions
+core,Object property,skc:restrictedUnder,Which annex restricts this ingredient,Regulation 1223/2009,restricted_ingredients
+core,Object property,skc:accordingTo,WHICH AUTHORITY says so. Leaves room for Lebanese regulation later,Halal ontology pattern,new
+product,Object property,skc:suitableFor,Product suits a skin type,Hansanie & Silva,skin_type
+product,Object property,skc:addressesConcern,Product addresses a concern,Mine,concerns
+product,Object property,skc:notRecommendedFor,Product should be avoided for a skin type,"Mine, inferred by rule",derived
+product,Object property,schema:offers,Product to Offer,schema.org,price columns
+product,Object property,schema:seller,"Offer to Shop. NOTE the price lives on the Offer, not the Product",schema.org,sold_by_shops
+evidence,Object property,skc:hasClaim,Product to Claim,Mine,source columns
+evidence,Object property,skc:hasEvidenceLevel,Claim to its level,Mine,skin_type_source
+evidence,Object property,prov:wasAttributedTo,Who said it,PROV-O,source columns
+evidence,Object property,prov:wasDerivedFrom,The page it was read from,PROV-O,evidence file URLs
+lebanon,Object property,skc:satisfiedBy,A need is satisfied by a product or a set of them,AliCoCo,new
+product,Data property,skc:atPosition,Where in the INCI list. Concentration order,MVFM paper uses this too,derived from ingredients
+product,Data property,skc:cosingCoverage,What share of the formula was found in the register,Mine,cosing_coverage
+product,Data property,skc:ingredientCount,How many ingredients,Mine,ingredient_count
+product,Data property,schema:price,On the Offer,schema.org,price_usd
+product,Data property,skc:priceSeenDate,When that price was true,Mine,price_seen_date
+lebanon,DEFINED CLASS,SensitiveSafeProduct,"Any product NONE of whose ingredients is a declarable allergen. I never list them; the reasoner works it out. Expect about 9,537",Abesova's mechanism,derived from ingredients
+lebanon,DEFINED CLASS,AvailableInLebanon,"Any product with at least one Offer from a Lebanese shop. Expect about 11,937",Mine,shops_in_lebanon
+lebanon,DEFINED CLASS,ManufacturerStatedProduct,"Any product whose suitability claim is level 1. Expect about 4,460",Mine,skin_type_source
+lebanon,DEFINED CLASS,RegulatedProduct,"Contains at least one restricted ingredient. Expect about 9,613",Mine,restricted_ingredients
+lebanon,DEFINED CLASS,FullyIdentifiedProduct,"Every ingredient found in the register. Expect about 9,032",Mine,cosing_coverage
+lebanon,DEFINED CLASS,NaturalClaimProduct,Marketed as natural. Built to TEST against Klaschka's finding that 56% of natural INCI substances are classified hazardous,Klaschka 2015,"free_from, product_summary"

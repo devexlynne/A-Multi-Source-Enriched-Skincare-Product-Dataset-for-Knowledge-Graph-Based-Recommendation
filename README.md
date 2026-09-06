@@ -202,7 +202,24 @@ and that what was excluded stayed excluded.
 where every part of the dataset came from, what went wrong along the way, and how
 each problem was fixed. This is the fullest explanation of the work.
 
-**ONTOLOGY_REUSE.md** is the plan for the ontology phase: which four
+**literature/** is the whole ontology phase. 59 papers read and recorded, the
+design that came out of them, and the build plan. Start at
+`literature/README.md`. `literature/papers.csv` renders as a sortable table in
+the browser; `literature/papers_full.csv` has all 38 columns, including two
+that most reviews leave out: whether I read the full paper or only the
+abstract, and whether the numbers a paper reports actually support the claim it
+makes from them. `literature/PAPERS_TABLE.xlsx` is the same material formatted
+across seven sheets, and `literature/latex/` holds the related work chapter
+ready to compile.
+
+The one finding worth knowing before you open any of it: a systematic review of
+28 ontology-based recommender systems found that they seldom name a
+construction methodology and that **none** of the 28 described an evaluation
+methodology. In this field, naming both is a contribution rather than
+housekeeping.
+
+**ONTOLOGY_REUSE.md** is the earlier, narrower version of that review. It is
+kept because it goes deeper on the five papers stored as PDFs: which four
 vocabularies to reuse, download links for each, what their classes and
 properties mean in plain terms, how all 42 columns map onto them, and an
 honest list of what to skip and why.

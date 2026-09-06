@@ -1,0 +1,478 @@
+% =====================================================================
+%  RELATED WORK
+%  MSc thesis, Beirut Arab University
+%  Ontology-based skincare recommendation for the Lebanese market
+%
+%  Include from your main file with:   \input{related_work}
+%  Requires in the preamble:
+%     \usepackage{booktabs}
+%     \usepackage{graphicx}
+%     \usepackage{tikz}
+%     \usetikzlibrary{positioning,arrows.meta,shapes.geometric}
+%     \usepackage[hidelinks]{hyperref}
+%     \usepackage{multirow}
+%     \usepackage{rotating}      % for the wide comparison table
+%     \usepackage{threeparttable}
+%
+%  Bibliography: related_work.bib
+% =====================================================================
+
+\chapter{Related Work}
+\label{ch:related}
+
+% ---------------------------------------------------------------------
+\section{How this chapter is organised}
+\label{sec:rw-organisation}
+
+This chapter narrows in four steps. Section~\ref{sec:rw-datasets} reviews how
+product datasets and semantic resources are constructed and what the community
+expects of them, which positions the first contribution of this thesis.
+Section~\ref{sec:rw-ontologies} reviews ontologies and knowledge graphs built
+for skincare, cosmetics and cosmetic regulation, which are the direct
+competitors. Section~\ref{sec:rw-kgrec} reviews ontology and knowledge graph
+based recommender systems in other domains, from which the mechanisms of this
+work are drawn. Section~\ref{sec:rw-dl} reviews deep learning approaches,
+including those applied to skin analysis, and states plainly what they do
+better. Section~\ref{sec:rw-hybrid} reviews hybrid neuro-symbolic work and
+positions it as future rather than present work. Section~\ref{sec:rw-gap}
+consolidates the gap.
+
+Each section closes by naming what is missing, and the missing thing is what
+the following section addresses. The final gap is the thesis.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  node distance=7mm,
+  box/.style={draw, rounded corners, align=center, text width=0.82\linewidth,
+              inner sep=5pt, font=\small},
+  gap/.style={draw, thick, rounded corners, align=center,
+              text width=0.82\linewidth, inner sep=5pt, font=\small\bfseries},
+  arr/.style={-{Latex[length=2mm]}, thick}
+]
+\node[box] (a) {\textbf{\S\ref{sec:rw-datasets} Resource construction}\\
+  provenance, validation and availability are expected of a modern resource};
+\node[box, below=of a] (b) {\textbf{\S\ref{sec:rw-ontologies} Skincare and cosmetics ontologies}\\
+  small, mostly unpublished, ingredients as free text, no regulatory grounding};
+\node[box, below=of b] (c) {\textbf{\S\ref{sec:rw-kgrec} KG recommenders elsewhere}\\
+  mature mechanisms exist, but none has been applied to skincare};
+\node[box, below=of c] (d) {\textbf{\S\ref{sec:rw-dl} Deep learning}\\
+  effective where labelled data exists, cannot cite a regulator, needs interactions};
+\node[box, below=of d] (e) {\textbf{\S\ref{sec:rw-hybrid} Hybrid neuro-symbolic}\\
+  assumes a domain knowledge graph already exists};
+\node[gap,  below=of e] (f) {\S\ref{sec:rw-gap} Gap: no skincare knowledge graph with
+  regulator-linked ingredients, modelled provenance and real market availability};
+\draw[arr] (a) -- (b); \draw[arr] (b) -- (c);
+\draw[arr] (c) -- (d); \draw[arr] (d) -- (e); \draw[arr] (e) -- (f);
+\end{tikzpicture}
+\caption{The structure of this chapter. Each section identifies a limitation
+that the next addresses.}
+\label{fig:rw-structure}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\section{Dataset and resource construction}
+\label{sec:rw-datasets}
+
+% TODO Lynne: paste your existing dataset related work from main.tex here,
+% then keep the closing paragraph below, which is what links this section
+% to the next one.
+
+Resource contributions are an established category with their own venues and
+their own review criteria. FoodKG was published as a resource paper at the
+International Semantic Web Conference~\cite{haussmann2019foodkg}, and the TOXIN
+knowledge graph appeared in \emph{Database}~\cite{toxin2024}. Both are judged on
+availability, documentation, validation and a stated maintenance plan rather
+than on predictive accuracy.
+
+% TODO Lynne: one paragraph here on existing cosmetic product datasets and
+% why none covers a national market. Use the material already in main.tex.
+
+\paragraph{What is missing.} Existing cosmetic product resources record what a
+product is. None records whether the product can be obtained in a given market,
+what it costs there, or how much the source of each claim is worth. The datasets
+that do exist are not linked to any regulatory register, so no statement they
+support can be traced to a legal instrument. The next section shows that the
+ontologies built over such data inherit all three limitations.
+
+% ---------------------------------------------------------------------
+\section{Ontologies and knowledge graphs for skincare and cosmetics}
+\label{sec:rw-ontologies}
+
+\subsection{Cross-domain cosmetics ontologies}
+\label{ssec:rw-moe}
+
+Moe and Aung~\cite{moe2014} construct two ontologies, one describing facial
+skin problems and one describing cosmetics, joined by bridge relations. Their
+methodological contribution is an explicit eight-task ontological engineering
+procedure, running from a glossary of terms with synonyms and acronyms through
+concept taxonomies, binary relation diagrams and a concept dictionary to a
+constants table. Both ontologies were built in Prot\'eg\'e.
+
+Recommendation proceeds in three stages. Taxonomic conversational case-based
+reasoning narrows an initially vague user query through ranked questions, using
+an \texttt{isNextRelatedTo} property to order them. The resulting problem and
+the candidate products are then placed in a weighted directed acyclic graph, and
+the Ford--Fulkerson maximum flow algorithm assigns each product a flow weight
+$W(v_i)=\sum_k f(v_i,k)$, with products ranked in descending order of that
+weight. Evaluation reports precision, recall and $F$-measure as a function of a
+recommendation threshold $\alpha$.
+
+Two observations matter for this thesis. First, no reasoner is used at any
+point, so the ontology serves as a graph structure rather than as a logical
+theory. Second, the paper claims greater accuracy than related work without
+reporting a dataset size, a baseline or a comparison, so that claim is not
+supported by the evidence presented. Ingredients are represented as a free-text
+property with an associated numeric value and are not linked to any register,
+which means no statement about regulatory status is expressible in the model.
+
+\subsection{OntoCosmetic and formulation support}
+\label{ssec:rw-ontocosmetic}
+
+Serna et al.~\cite{serna2021} present OntoCosmetic, a decision support ontology
+for the design of emulsion-based cosmetic products, extended by Gabriel et
+al.~\cite{gabriel2023} into a cross-platform application, Formultools. The
+knowledge base is assembled from four kinds of material: general subproblems
+expressed as physicochemical properties to promote or limit, general solution
+strategies, ingredient databases typed by function, and heuristics linking the
+two. Heuristics are encoded as SWRL rules in Prot\'eg\'e and carry
+\texttt{hasHeuristicHighThreshold}, \texttt{hasHeuristicLowThreshold} and
+\texttt{hasHeuristicSource} properties, the last of which records the provenance
+of the rule itself.
+
+The application was developed using the five-planes user-centred design
+method, in co-design with cosmetics experts, and evaluated across iterations
+using the AttrakDiff instrument. It supports ingredient screening, multi-criteria
+ingredient selection and formulation evaluation, citing the Analytic Hierarchy
+Process for the multi-criteria component.
+
+OntoCosmetic is the only ontology reviewed in this section that is publicly
+resolvable, at \url{https://purl.org/ontocosmetic}. Inspection of the published
+file gives 116 classes, 26 object properties, 20 data properties and 279
+individuals, all populated manually. Its classes, among them \texttt{HLB},
+\texttt{DropletSize}, \texttt{Rheology} and \texttt{Emollient\_Dosage}, model
+formulation chemistry rather than retail selection: the ontology is designed to
+help a formulator make a stable cream, not to help a consumer choose one.
+Neither paper reports an evaluation against ground truth, and Gabriel et al.
+state in their conclusion that testing with experts remained future work.
+
+\subsection{Vision-driven skincare recommendation}
+\label{ssec:rw-hansanie}
+
+Hansanie and Silva~\cite{hansanie2024} combine a convolutional neural network
+that grades acne severity from a facial photograph with an ontology that
+performs the product selection. Their vocabulary was derived from interviews
+with dermatologists and health professionals together with a survey of
+twenty-one participants, and the class hierarchy was built top-down. The
+ontology is deliberately split into three modules, covering skincare concepts,
+product information and user profiles, which are then merged; the stated
+rationale is that the three evolve independently.
+
+Their property set includes \texttt{suitableFor} from treatment products to
+skin types, \texttt{hasKeyIngredient}, \texttt{hasProductRecommendation} and
+\texttt{hasRating}. The implementation uses Prot\'eg\'e, the Pellet reasoner,
+Owlready2 for querying from Python, and Tkinter for the interface. The severity
+grade produced by the network is asserted into the ontology as a fact about the
+user, so the perception component and the knowledge component remain separable.
+
+The reported figures require care. The headline result of 87.5\,\% is the
+proportion of twenty-four survey participants who expressed satisfaction with
+the products shown; the classification accuracy of the network itself is
+77.5\,\%. No baseline recommender is compared against, and no ground-truth set
+of correct recommendations is constructed.
+
+\subsection{Defined classes and query-driven recommendation}
+\label{ssec:rw-abesova}
+
+Abesov\'a et al.~\cite{abesova2023} build a skincare ontology over Sephora
+product and review data, comprising 36 classes, 6 object properties and 6 data
+properties, following an explicitly middle-out and iterative construction
+process in which the scope widened twice as new data sources were incorporated.
+The knowledge graph was produced from scraped CSV files using OntoRefine and
+stored in GraphDB, with country data and capital-city coordinates obtained by
+querying DBpedia through an external SPARQL endpoint. Recommendation is
+performed by SPARQL queries rather than by procedural code.
+
+Their principal methodological contribution, and the one adopted in this
+thesis, is the use of defined classes. Rather than annotating individual
+products with a suitability label, they state an equivalence axiom, so that
+membership of \texttt{OilySkinProducts} follows from
+\texttt{hasOilyScore\ value\ 5} and is recomputed by the reasoner whenever the
+underlying data changes.
+
+The work is a student project and is not peer reviewed, which is stated here
+because it is cited for a mechanism rather than for a result. Its three
+acknowledged limitations are directly relevant. Defined-class membership
+provides no ordering within a class, so ranking requires a separate signal; a
+product supported by a single weak review can be recommended ahead of products
+with strong support, because the two selection paths are not commensurable; and
+the authors observe that class restrictions based on ingredients would permit a
+symbolic rather than statistical approach, which they did not implement.
+
+\subsection{Ontologies populated from commercial catalogues}
+\label{ssec:rw-bittech}
+
+A recent ontology-based skincare recommendation system~\cite{bittech2025}
+follows METHONTOLOGY to produce twelve core classes, among them Product,
+Ingredient, Skin Type, Skin Concern, Benefit, Allergen Type and Formulation
+Trait, together with more than twenty-five object properties. The knowledge
+base was populated by scraping three commercial platforms, yielding over 3{,}800
+products and 28{,}000 ingredients, and is queried through Apache Jena Fuseki.
+
+This is the closest published system to the present work in both scale and
+intent. It differs in four respects. It targets the Indonesian market rather
+than a market in which product availability is itself uncertain; its allergen
+representation is a locally defined class rather than a link to a statutory
+register; it does not model price, availability or provenance; and its product
+count is approximately one third of the dataset used here.
+
+% TODO Lynne: obtain and read the full PDF before submission, then confirm or
+% correct the four points above and add whether their ontology is published.
+
+\subsection{Regulatory and clinical knowledge graphs}
+\label{ssec:rw-regulatory}
+
+Two lines of work outside recommendation are relevant because they supply the
+grounding that skincare ontologies lack.
+
+The TOXIN knowledge graph~\cite{toxin2024} supports animal-free risk assessment
+of cosmetics, drawing on the scientific opinions that underpin the annexes of
+Regulation (EC) No~1223/2009. Its construction is instructive: curated
+spreadsheets are transformed into RDF using R2RML, the ToXic Process Ontology
+from the OBO Foundry provides the primary structure, external resources are
+incorporated by reference to their IRIs rather than by copying, and each
+integration is held in a separate named graph so that the origin of any
+statement can be traced. It contains no products.
+
+In the clinical direction, DermO~\cite{dermo2016} provides more than three
+thousand expert-authored terms for cutaneous disease, organised under twenty
+upper-level categories, aligned to ICD-10 and published through BioPortal in
+both OBO and OWL~2 formats. The more recent D3X ontology~\cite{d3x2024} links
+dermoscopic patterns to differential diagnoses and is evaluated through a
+usability study. Neither addresses cosmetic products, but both offer a
+vocabulary for skin concerns with clinical standing that a retail-derived
+vocabulary does not possess.
+
+A parallel may also be drawn with ontologies that model regulatory status
+directly. Work on flavouring ontologies for halal status determination
+\cite{halal2024} represents the ingredient, the certifying authority and the
+resulting status as distinct entities, so that a product inherits a status from
+its constituents according to a named authority. The structure transfers
+directly to ingredients restricted under the European cosmetics regulation.
+
+\subsection{Summary of Section~\ref{sec:rw-ontologies}}
+
+\begin{table}[htbp]
+\centering
+\caption{Ontologies and knowledge graphs in skincare, cosmetics and cosmetic
+regulation. A dash indicates the property is absent or not reported.}
+\label{tab:rw-ontologies}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccccc}
+\toprule
+ & \rotatebox{60}{Moe 2014} & \rotatebox{60}{OntoCosmetic}
+ & \rotatebox{60}{Hansanie 2024} & \rotatebox{60}{Abesov\'a 2023}
+ & \rotatebox{60}{Bit-Tech 2025} & \rotatebox{60}{TOXIN 2024}
+ & \rotatebox{60}{\textbf{This work}} \\
+\midrule
+Peer reviewed                & $\circ$ & \checkmark & \checkmark & --         & \checkmark & \checkmark & \checkmark \\
+Ontology published           & --      & \checkmark & --         & --         & --         & \checkmark & \checkmark \\
+Named methodology            & $\circ$ & --         & --         & \checkmark & \checkmark & --         & \checkmark \\
+Products modelled            & --      & 279        & $\circ$    & $\circ$    & 3{,}800    & --         & \textbf{12{,}629} \\
+Ingredients linked to registry & --    & --         & --         & --         & --         & \checkmark & \checkmark \\
+Declarative population       & --      & --         & --         & \checkmark & --         & \checkmark & \checkmark \\
+Reasoner used                & --      & \checkmark & \checkmark & \checkmark & \checkmark & --         & \checkmark \\
+SPARQL interface             & --      & --         & $\circ$    & \checkmark & \checkmark & \checkmark & \checkmark \\
+External linking             & --      & --         & --         & \checkmark & --         & \checkmark & \checkmark \\
+Provenance modelled          & --      & $\circ$    & --         & --         & --         & \checkmark & \checkmark \\
+Price or availability        & $\circ$ & $\circ$    & --         & $\circ$    & --         & --         & \checkmark \\
+Evaluated on ground truth    & --      & --         & $\circ$    & --         & $\circ$    & n/a        & \checkmark \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \checkmark\ present; $\circ$ partial or weak; -- absent or not reported.
+\end{tablenotes}
+\end{table}
+
+\paragraph{What is missing.} No system in Table~\ref{tab:rw-ontologies}
+combines an ingredient layer with statutory grounding, an explicit model of
+where each claim came from, and a representation of whether the recommended
+product can actually be obtained. Ingredients are represented as free text in
+every skincare ontology reviewed; the single work that links ingredients to the
+European regulatory framework contains no products at all. The mechanisms
+needed to close this gap have, however, been developed in other domains, and
+these are reviewed next.
+
+% ---------------------------------------------------------------------
+\section{Ontology and knowledge graph based recommender systems}
+\label{sec:rw-kgrec}
+
+\subsection{Ontological user profiling}
+
+Middleton et al.~\cite{middleton2004} established ontological user profiling in
+their Quickstep and Foxtrot systems for recommending research papers, reporting
+three findings that remain the standard justification for the approach:
+ontological inference improves user profiling, because interest in a specific
+topic implies interest in its parent; external ontological knowledge can
+bootstrap a recommender for users with no history; and visualising a profile so
+that users may correct it improves accuracy. The second finding is the direct
+answer to the cold-start problem that affects any purely collaborative method,
+and it applies with particular force to a market in which no interaction logs
+exist.
+
+\subsection{Constraint satisfaction over a domain knowledge graph}
+
+FoodKG~\cite{haussmann2019foodkg} integrates recipes, nutritional data, food
+taxonomies and links to existing ontologies into a single graph, over which a
+SPARQL service identifies recipes that can be prepared from available
+ingredients while respecting hard constraints such as allergies. The structural
+correspondence with the present work is close: recipes correspond to products,
+nutritional data supplied by an authority corresponds to the CosIng register,
+and allergen constraints correspond to the twenty-six fragrance allergens whose
+declaration is required under the European regulation. Subsequent work frames
+the task explicitly as constrained question answering over a knowledge
+graph~\cite{chen2021constrained}, which is a more accurate description of the
+skincare selection problem than ranking is.
+
+\subsection{Linked open data as a source of item features}
+
+Di Noia, Ostuni and colleagues~\cite{dinoia2012lod,ostuni2013topn,dinoia2015wims}
+compute item similarity using a semantic vector space model whose dimensions are
+links in the linked open data cloud rather than terms in a document. The
+approach permits content-based recommendation in the absence of ratings, which
+is the situation of this thesis, where the rating field is populated for only
+half of the catalogue and no user history exists at all. The authors identify
+entity resolution against external datasets as their principal open problem, an
+observation consistent with the matching error rates measured during the
+construction of the dataset used here.
+
+\subsection{User needs as first-class entities}
+
+AliCoCo~\cite{alicoco2020} argues that conventional product ontologies leave a
+semantic gap because they describe what a product is rather than what a user
+needs, and formalises e-commerce concepts, that is user needs, as first-class
+entities in their own right. The argument transfers directly. Skin concerns are
+presently modelled throughout the literature as attributes of products, whereas
+a need entity can be satisfied by a combination of products, can carry a budget
+and a season, and can be constrained by local availability.
+
+\subsection{Taxonomies of knowledge graph recommendation}
+
+Guo et al.~\cite{guo2022survey} classify knowledge-graph-based recommender
+systems as embedding-based, path-based or unified. All three families presuppose
+a user--item interaction matrix and treat the knowledge graph as side
+information mitigating sparsity. The present work is situated upstream of this
+taxonomy: it constructs, for a domain and a market in which none exists, the
+knowledge graph that such methods presuppose.
+
+\paragraph{What is missing.} The mechanisms surveyed in this section, defined
+classes, hard constraint satisfaction, linked-data-derived similarity and needs
+as entities, are mature and well evidenced, but none has been applied to
+skincare, and none of the systems reviewed operates in a market where
+availability cannot be assumed.
+
+% ---------------------------------------------------------------------
+\section{Deep learning approaches}
+\label{sec:rw-dl}
+
+Lee et al.~\cite{lee2024} estimate the efficacy of a cosmetic product from its
+ingredient list using a deep neural network, combining the result with automated
+facial skin analysis to produce personalised recommendations. The point of
+departure is the same as that of this thesis, namely the ingredient list, and
+the divergence lies entirely in how ingredients are connected to outcomes: by a
+function learned from data in their case, and by the European register together
+with stated rules in this one.
+
+The broader literature on neural recommendation is well
+surveyed~\cite{zhang2019survey}, with neural collaborative
+filtering~\cite{he2017ncf} providing the standard baseline. Every method in this
+family learns from user behaviour. The dataset constructed for this thesis
+contains none, because it is a product resource rather than an interaction log,
+and this determines which half of the literature the work belongs to.
+
+It should be stated directly that where sufficient labelled data exists, a
+learned model is likely to outperform a rule-based one on benchmark accuracy,
+because it can capture interactions that are not explicitly encoded. The
+argument advanced here is not one of accuracy. It is that in a domain carrying
+physical risk and governed by a legal framework, a recommendation that cannot
+state its reason cannot be audited by a regulator, cannot be used by a
+pharmacist, and cannot be corrected when it is wrong.
+
+\paragraph{What is missing.} Vision and learned models can establish the state
+of a user's skin and can estimate what a formulation is likely to do. Neither
+can establish that the resulting product is stocked in Beirut, what it costs
+there this month, or which annex of the cosmetics regulation restricts one of
+its preservatives.
+
+% ---------------------------------------------------------------------
+\section{Hybrid neuro-symbolic approaches}
+\label{sec:rw-hybrid}
+
+A substantial body of work combines knowledge graphs with neural
+recommendation. CKE~\cite{zhang2016cke} learns item representations jointly from
+a knowledge graph and from ratings; RippleNet~\cite{wang2018ripplenet} propagates
+user preference outward through the graph; KGAT~\cite{wang2019kgat} applies graph
+attention over a collaborative knowledge graph to capture high-order relations;
+and KPRN~\cite{wang2019kprn} encodes the path between user and item with a
+recurrent network and weights paths by their strength, so that the path itself
+constitutes an explanation. Subsequent work optimises explanation paths for
+quality rather than relevance alone~\cite{balloccu2022}.
+
+Each of these methods requires an interaction matrix and treats the knowledge
+graph as auxiliary. The position of this thesis is the converse: the graph is
+the contribution and the interactions do not yet exist. These methods are
+therefore what the resource constructed here enables once deployment produces
+interaction data, and they are discussed again in the future work of
+Chapter~\ref{ch:conclusion}.
+
+% TODO Lynne: check that \ref{ch:conclusion} matches your actual label.
+
+One bridge is applicable immediately. Ontology embedding methods such as
+RDF2Vec~\cite{ristoski2016rdf2vec} and OWL2Vec*~\cite{chen2021owl2vec} require an
+ontology rather than an interaction log. OWL2Vec* in particular encodes graph
+structure, lexical content and logical constructors, having first materialised
+the ontology with a reasoner, and was evaluated on class membership and class
+subsumption prediction. Both tasks correspond to real gaps in the present
+dataset, in which size is recorded for 27\,\% of products and rating for 51\,\%.
+
+Finally, the use of large language models in ontology engineering is developing
+rapidly, with a dedicated shared task~\cite{llms4ol2024} covering term typing,
+taxonomy discovery and non-taxonomic relation extraction, and a recent
+systematic review of the area~\cite{li2026llmoe}. The free-text benefit and
+concern fields of the dataset used here are candidates for exactly these tasks,
+subject to validation of every proposed term against an authoritative source.
+
+% ---------------------------------------------------------------------
+\section{The gap addressed by this thesis}
+\label{sec:rw-gap}
+
+Five limitations recur across the reviewed literature.
+
+\begin{enumerate}
+  \item \textbf{No ingredient layer with statutory standing.} Every skincare
+    ontology reviewed represents ingredients as free text or as a small,
+    manually curated class list. The one knowledge graph that links cosmetic
+    ingredients to the European regulatory framework contains no products.
+  \item \textbf{No model of provenance.} No reviewed skincare ontology records
+    who asserted a claim, or how much weight that source should carry. Every
+    claim is presented as equally reliable.
+  \item \textbf{No model of availability.} Every reviewed system assumes that a
+    recommended product can be purchased. In the Lebanese market that assumption
+    fails, and it fails differently for imported and for locally manufactured
+    products.
+  \item \textbf{Weak evaluation.} Two of the reviewed systems report user
+    satisfaction on samples of fewer than thirty participants, one presents a
+    single case study, and one states that expert evaluation was never carried
+    out.
+  \item \textbf{Poor availability of artefacts.} One of six reviewed ontologies
+    is publicly resolvable, which prevents the field from building on its own
+    results.
+\end{enumerate}
+
+This thesis addresses limitations 1, 2, 3 and 5 directly through the design of
+the ontology and the publication of the resulting artefacts, and addresses
+limitation 4 through a competency-question-driven evaluation reported in
+Chapter~\ref{ch:evaluation}.
+
+% TODO Lynne: check that \ref{ch:evaluation} matches your actual label.
