@@ -818,15 +818,120 @@ rest on review scores. Ours rest on the formula, checked against the EU
 register. The gap they name is the gap our dataset fills. Say this in the
 meeting.
 
-### The outside-the-box idea
+### The outside-the-box idea, worked through properly
 
-They pulled *place* out of DBpedia and got a map free. We can do the same with
-*corporate ownership* out of Wikidata. Our 1,463 brands belong to far fewer
-parent companies, and Wikidata knows which. Three consequences, all free: market
-concentration in Lebanon becomes computable, we can detect that two differently
-priced products come from the same maker, and we can answer "is there a cheaper
-equivalent", which is the question a Lebanese shopper in a currency crisis
-actually asks.
+They pulled *place* out of DBpedia and got a map for free. We can do the same
+trick with **who owns which brand**, out of Wikidata.
+
+#### What Wikidata is
+
+Wikidata is Wikipedia's data, stored as a graph anyone can query. It already
+knows that CeraVe is owned by L'Oréal, that L'Oréal is a French company, when
+it was founded, and so on. Somebody else maintains all of that. It is free, it
+is public, and it has a SPARQL endpoint.
+
+#### The mechanism, in three steps
+
+**Step 1. Say which Wikidata entity each of our brands is.**
+
+One line per brand. `Q1806393` is Wikidata's identifier for CeraVe.
+
+```turtle
+skc:brand/CeraVe  owl:sameAs  wd:Q1806393 .
+skc:brand/Vichy   owl:sameAs  wd:Q3557584 .
+```
+
+`owl:sameAs` means "these two names refer to the same real thing". It is the
+standard way of saying it.
+
+**Step 2. Ask Wikidata who owns them.**
+
+Wikidata has a property `P749` meaning "parent organisation". We ask their
+endpoint, not our own data:
+
+```sparql
+SELECT ?brand ?parentLabel WHERE {
+  ?brand wdt:P749 ?parent .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}
+```
+
+**Step 3. Pull the answer back into our graph.**
+
+Now every product in our dataset carries a parent company, and **we typed none
+of it**. That is the whole point of linking rather than copying.
+
+#### The real example, from our own data
+
+I ran this on `SKINCARE_FINAL.csv`. Nine of our brands belong to L'Oréal:
+
+| Brand | Products in our dataset |
+|---|---|
+| La Roche-Posay | 154 |
+| Garnier | 120 |
+| Kiehl's | 67 |
+| Vichy | 62 |
+| SkinCeuticals | 61 |
+| CeraVe | 45 |
+| Lancôme | 41 |
+| L'Oréal Paris | 19 |
+| Decléor | 1 |
+| **Total** | **570 products** |
+
+Same for other groups: Kenvue owns 215 of our products through Neutrogena,
+Aveeno and Clean & Clear. Unilever owns 213 through Dove, Simple, Vaseline,
+Paula's Choice and Dermalogica. Beiersdorf owns 145 through Nivea, Eucerin and
+Aquaphor.
+
+**The number that makes the point.** Our dataset holds **118 L'Oréal-owned
+products that contain niacinamide and are sold in Lebanon.** Their prices run
+from:
+
+| | |
+|---|---|
+| Cheapest | **Vichy Quenching Mineral Mask, $0.51** |
+| Dearest | **SkinCeuticals Resveratrol B E Antioxidant Night Serum, $185.58** |
+
+That is a **364 times** price range, for the same active ingredient, from the
+same parent company, on shelves in the same city.
+
+#### The three questions this answers
+
+**One. Is there a cheaper equivalent?**
+
+A shopper looks at a $60 SkinCeuticals serum. The system can now say: the same
+company makes a CeraVe product with the same active ingredient for a fraction
+of that, and here is the shop. **That is the question a Lebanese shopper in a
+currency crisis actually asks**, and no cosmetics system in the review can
+answer it, because none of them knows who owns whom.
+
+**Two. How concentrated is the Lebanese market really?**
+
+We can say we have 1,463 brands. That sounds like enormous choice. But if a few
+multinationals own most of what is actually stocked here, the real choice is
+much smaller than the brand count suggests. **That is a finding about the
+Lebanese market**, and it comes free from a link.
+
+**Three. Where does what we buy come from?**
+
+Wikidata also holds each company's country. So we could show what share of
+skincare on Lebanese shelves is French, American, Korean or locally made. We
+have `country` per product already, but company ownership is a different and
+more honest picture: a "Korean" brand owned by a French group is a different
+fact.
+
+#### Why this is a good idea and not just a nice one
+
+It costs almost nothing. One `owl:sameAs` line per brand, and the brands with
+most products are the easy ones to identify. It uses a mechanism a paper in our
+own review already demonstrated. And it produces three results that are
+interesting to a Lebanese reader specifically, which is exactly the kind of
+contribution a local thesis should be looking for.
+
+**The caution.** Wikidata is community-maintained, so ownership can be out of
+date or missing for small brands. So we cite Wikidata as the source of that
+particular fact rather than asserting it ourselves. Which is, conveniently,
+exactly what our evidence-level design is built to do.
 
 ---
 
