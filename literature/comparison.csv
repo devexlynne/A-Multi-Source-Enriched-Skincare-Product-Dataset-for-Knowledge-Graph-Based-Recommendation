@@ -1,0 +1,15 @@
+﻿,Moe & Aung 2014,OntoCosmetic 2021/23,Hansanie 2024,Abesova 2023,bit-Tech 2025,Utari 2023,TOXIN 2025,HaCKG 2025,US
+Properly peer reviewed?,weak journal,yes,yes,"no, students",yes,yes,yes,yes,will be
+Can you download the ontology?,no,YES,no,no,?,no,YES,?,"yes, planned"
+Followed a named method?,"8 steps, unnamed",no,no,middle out,METHONTOLOGY,METHONTOLOGY,no,no,MOMo + LOT
+How many products,never say,279,never say,some Sephora,"3,800",62,none,some,"12,629"
+Ingredients tied to EU law?,no,no,no,no,no,no,YES,no,"YES, all 28,573"
+Records who claimed what?,no,rules only,no,no,no,no,by source,no,"YES, 4 levels"
+Knows if you can buy it?,price band,as a criterion,no,shop link,no,no,no,no,"YES, per shop, 2 currencies"
+Which market,none,none,none,none,Indonesia,Indonesia,none,none,LEBANON
+How the data got in,by hand?,by hand,?,OntoRefine,scraping,?,R2RML,?,RML mapping
+Reasoner used,none,SWRL,Pellet,class rules,Fuseki,none,?,neural,HermiT + SHACL
+Neural bit?,no,no,CNN on your face,no,no,no,no,graph attention,"no, future"
+Tested properly?,no baseline,no,24 people,no,?,queries only,use cases,benchmarks,"4 ways, planned"
+What it's really for,problem to product,a cream that doesn't split,grading acne,a routine,Indonesian shops,proof of concept,animal-free safety,predicting halal,"buying skincare in Lebanon, with a reason"
+TOXIN has the law but not one product. Everyone else has products and no law. Nobody writes down who made a claim. Nobody checks if you can buy it. We are the bit in the middle.,,,,,,,,,
