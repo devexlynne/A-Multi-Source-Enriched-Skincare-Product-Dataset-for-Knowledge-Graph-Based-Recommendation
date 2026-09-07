@@ -1139,14 +1139,141 @@ they are free text we invented.
 | a clinician cannot review it | a clinician recognises every term |
 | no route into medical literature | a route into biomedical resources |
 
-### The outside-the-box idea
+### What they actually did, step by step
 
-DermO categorises disease partly by **anatomical location**. Our product types
-are a retail taxonomy: face wash, eye cream, body lotion. If we align products
-to body site through DermO's anatomy, we can answer questions no retail taxonomy
-can: which products address a concern **at a site**, and where a routine leaves
-a site uncovered. Nobody in cosmetics modelling connects product to body site
-through a clinical ontology.
+It helps to know how DermO was made, because it is the opposite of how we made
+our vocabulary, and that contrast is the whole point.
+
+**They started with dermatologists, not with data.** A group at the University
+of Birmingham sat down with clinicians and wrote out the names of skin
+diseases. By hand. No scraping, no machine learning. Over 3,000 terms.
+
+**They organised the diseases by their real features, not by name.** Every
+disease is filed under a small number of headings, using things like:
+
+| They classify by | Meaning |
+|---|---|
+| **Anatomical location** | where on the body it happens |
+| **Heritability** | whether it runs in families |
+| **Affected cell or tissue type** | what part of the skin it involves |
+| **Aetiology** | what causes it |
+
+That gives 20 top-level categories with everything else underneath.
+
+**They lined it up with ICD-10.** ICD-10 is the World Health Organization's
+international list of diseases, the one hospitals and insurers use everywhere.
+So a DermO term is not just a word somebody liked. It connects to the code a
+doctor would write on a file.
+
+**They published it properly.** On GitHub and on BioPortal, which is the main
+public home for biomedical ontologies, in two formats so anyone can use it. It
+is free.
+
+**And they connected it to other medical ontologies**, so it sits inside a whole
+network of disease and symptom vocabularies rather than standing alone.
+
+### Why this matters to us more than I first realised
+
+I looked again at our own `concerns` column. It holds six values and **every one
+of them names a real disease or a real skin state**:
+
+| Our concern | Products | Is it a real clinical entity |
+|---|---|---|
+| May Worsen Eczema | 6,901 | **Yes.** Eczema is a diagnosed condition with ICD-10 codes |
+| May Worsen Rosacea | 5,871 | **Yes.** Also a diagnosed condition |
+| May Worsen Irritation | 5,819 | Yes, contact irritation is clinical |
+| May Worsen Oily Skin | 5,514 | A skin state rather than a disease |
+| May Worsen Dryness | 4,549 | Clinically, xerosis |
+| May Trigger Acne | 4,261 | **Yes.** Acne vulgaris, with ICD-10 codes |
+
+**So we are already making medical statements and we did not fully notice.**
+"This product may worsen eczema" is a claim about a disease. We derived it from
+the formula ourselves, using our own rules, and no clinician has ever checked
+either the rule or the wording.
+
+That is a genuine weakness, and a supervisor could reasonably raise it.
+
+### How we use DermO, in three steps
+
+**Step 1. Point each of our concerns at the matching DermO term.**
+
+Six lines. That is the whole job.
+
+```turtle
+skc:MayWorsenEczema   skc:aboutCondition  dermo:Eczema .
+skc:MayTriggerAcne    skc:aboutCondition  dermo:AcneVulgaris .
+skc:MayWorsenRosacea  skc:aboutCondition  dermo:Rosacea .
+```
+
+**Step 2. Say what kind of link it is.** Our concern is not the disease. It is a
+statement *about* the disease, so we point at it rather than claiming to be it.
+This is the honest modelling choice and it is worth saying out loud.
+
+**Step 3. Inherit everything DermO already knows.** Once linked, our products
+connect through DermO to ICD-10, to the body site, and to the wider network of
+medical vocabularies. **We wrote six lines and got all of that.**
+
+### What it buys us
+
+| Before | After |
+|---|---|
+| "Eczema" means whatever we meant by it | It means a specific entity a dermatologist recognises |
+| Our vocabulary is ours alone | Our vocabulary reaches ICD-10, which every clinician uses |
+| No doctor could review our concerns | A doctor opens DermO and checks every term in minutes |
+| Our medical claims rest on our own authority | They rest on an ontology built by clinicians and published in a peer reviewed journal |
+
+**This is the fix for the weakness in B3.** Hansanie and Silva interviewed
+dermatologists and we did not. We cannot get a dermatologist quickly. But we can
+align to one that dermatologists already built, and say so.
+
+### The outside-the-box idea: body site
+
+Here is the part nobody in cosmetics has done.
+
+DermO knows **where on the body** each disease happens. Our product types
+already imply a body site, but only as retail labels with no meaning behind
+them. Counting our own data:
+
+| Body site | Our products | Which types |
+|---|---|---|
+| Eye area | **637** | Eye Moisturizer 597, Eye Mask 40 |
+| Lips | **550** | Lip Moisturizer 509, Lip Mask 41 |
+| Body | **676** | Bath & Body |
+| Hands | **62** | Hand Care |
+| Face, general | the remaining ~10,700 | cleansers, serums, moisturisers, masks |
+
+Right now "Eye Moisturizer" is just a shop category. If we connect it to an
+actual anatomical entity through DermO, three things become possible that a
+retail taxonomy cannot do.
+
+**One. Ask a question about a place, not a category.** "Show me everything for
+the eye area" currently means matching two product type strings and hoping we
+guessed them all. With a body site linked properly, the reasoner finds them,
+including any type we add later, without us updating a list.
+
+**Two. Find the gap in a routine.** A person buys a cleanser, a serum and a
+moisturiser. All face. The system can say: **you have nothing for the eye area
+and nothing for your lips.** That is a genuinely useful thing to tell somebody,
+and it is impossible without knowing that products occupy places on a body.
+
+**Three. Catch a site mismatch.** A product intended for the body carrying a
+concern that belongs to a facial condition is worth flagging. Right now nothing
+in our data would notice.
+
+**Nobody in cosmetics modelling connects a product to a body site through a
+clinical ontology.** Every system reviewed treats product type as a flat shop
+category. Six lines of linking plus a body site property turns it into anatomy.
+
+### Say this if it comes up
+
+> Our concerns column already makes medical statements. It says a product may
+> worsen eczema or trigger acne, and those are real diagnosed conditions. We
+> derived those from the formula with our own rules and no clinician has
+> reviewed them. DermO is 3,000 skin disease terms written by dermatologists,
+> organised by body site and cause, aligned to ICD-10 and published free on
+> BioPortal. Six lines of alignment give our vocabulary clinical standing that
+> we could not otherwise obtain, and open up a body site dimension that no
+> cosmetics system has.
 
 ---
 
