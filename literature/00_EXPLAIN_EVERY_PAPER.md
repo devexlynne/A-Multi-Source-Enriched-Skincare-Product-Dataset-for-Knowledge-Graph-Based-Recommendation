@@ -20,6 +20,7 @@ Part 4 is our plan. Part 5 is every question they might ask and the answer.
 | 3 | The comparison table and the gap |
 | 4 | What we build, and in what order |
 | 5 | Every question they might ask, with the answer |
+| 6 | Appendix: the other 25 papers, one line each |
 
 ---
 
@@ -253,14 +254,30 @@ published.
 
 ---
 
-# PART 2. THE TEN PAPERS
+# PART 2. EVERY PAPER, ONE AT A TIME
 
-Each one has a **say this** box at the top. That is the version to speak. The
-detail underneath is for when they ask a follow-up.
+Thirty four papers, in four groups. Each one has a **say this** box at the top,
+which is the version to speak aloud. The detail underneath is for when they ask
+a follow-up.
+
+| Group | What is in it | How many |
+|---|---|---|
+| **A** | Skincare and cosmetics ontologies. The direct competitors | 8 |
+| **B** | Ingredients, regulation and clinical vocabularies | 10 |
+| **C** | Ontology recommenders in other fields, where the mechanisms come from | 10 |
+| **D** | Reviews and evaluation, which tell us what counts as good | 6 |
+
+The remaining 25 papers in the spreadsheet are deep learning background, hybrid
+neural work and tooling. They are listed in the appendix at the end, one line
+each.
 
 ---
 
-## B1. Moe and Aung (2014)
+# GROUP A. SKINCARE AND COSMETICS ONTOLOGIES
+
+---
+
+## A1. Moe and Aung (2014)
 
 ### Say this
 
@@ -467,7 +484,7 @@ a Lebanese pharmacy chain would understand it instantly.
 
 ---
 
-## B2. OntoCosmetic: Serna et al. (2021) and Gabriel et al. (2023)
+## A2. OntoCosmetic: Serna et al. (2021) and Gabriel et al. (2023)
 
 ### Say this
 
@@ -585,7 +602,7 @@ evaluation target rather than as an import.
 
 ---
 
-## B3. Hansanie and Silva (2024)
+## A3. Hansanie and Silva (2024)
 
 ### Say this
 
@@ -701,7 +718,7 @@ no ethical approval and no image dataset.
 
 ---
 
-## B4. Abesova, Hajkova, Ramadan and Zdych (2023)
+## A4. Abesova, Hajkova, Ramadan and Zdych (2023)
 
 ### Say this
 
@@ -935,7 +952,7 @@ exactly what our evidence-level design is built to do.
 
 ---
 
-## B5. The Indonesian paper (2025)
+## A5. The Indonesian paper (2025)
 
 ### Say this
 
@@ -996,7 +1013,125 @@ product description is advertising.
 
 ---
 
-## B6. TOXIN knowledge graph (2025)
+## A6. Utari et al. (2023), the small Indonesian one
+
+### Say this
+
+> A very small cosmetics ontology from Indonesia, three classes and 62 products,
+> built with METHONTOLOGY and tested by running SPARQL queries. It teaches us
+> almost nothing technically. I keep it in the table for one reason: sitting
+> next to our 12,629 products it shows the scale difference without me having to
+> claim anything.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Pengembangan Ontologi Semantik Pada Domain Produk Kosmetik |
+| Published | JELIKU, Universitas Udayana, Indonesia, 2023 |
+| Cited | 0 |
+| I read | The abstract |
+
+### What they did
+
+They say there are too many cosmetic products for a buyer to choose sensibly,
+so they built a semantic ontology as a solution.
+
+| | |
+|---|---|
+| Method | **METHONTOLOGY**, named explicitly |
+| Classes | **3** |
+| Object properties | **5** |
+| Individuals | **62** |
+| Evaluation | ran SPARQL queries and checked the results looked right |
+
+### How we use it
+
+Two things.
+
+**The scale comparison.** 3 classes and 62 products against our four modules and
+roughly 1.8 million triples. Put both in the table and the contrast speaks.
+
+**Evidence that METHONTOLOGY is the default here.** Three separate Indonesian
+papers in our review use it. That tells us it is the method people reach for,
+which is exactly why choosing MOMo and LOT instead needs a stated reason. We
+have one: MOMo is built for modules and LOT is built for publishing, and both
+are the things this field is worst at.
+
+### Their weak point
+
+Nothing to criticise. It is a proof of concept and does not pretend otherwise.
+Be fair about that.
+
+---
+
+## A7. Mahadewi et al. (2024), body care with collaborative filtering
+
+### Say this
+
+> Another small Indonesian ontology, this time joined to a collaborative
+> filtering algorithm. What I take from it is not the method, it is the
+> evaluation: they report two named, standard instruments. In a field where a
+> systematic review found nobody reports any evaluation method at all, simply
+> naming your instruments is a differentiator.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Penerapan Algoritma Slope One dalam Collaborative Filtering, a body care recommender |
+| Published | JELIKU, Universitas Udayana, Indonesia, 2024 |
+| Cited | 0 |
+| I read | The abstract |
+
+### What they did
+
+Their argument is that online body care information is often irrelevant or
+inaccurate, so they built the knowledge base as an ontology and put a
+recommender on top.
+
+| Step | What |
+|---|---|
+| Ontology method | **METHONTOLOGY** |
+| System method | Prototyping |
+| Recommendation | **Slope One**, a collaborative filtering algorithm that predicts a rating from the average difference between items |
+| Evaluated with | **SUS** and **MAE** |
+
+**SUS** is the System Usability Scale, a standard ten question survey producing
+a score out of 100. **MAE** is Mean Absolute Error: on average, how far the
+predicted rating is from the real one, where closer to zero is better.
+
+### Their results
+
+| Measure | Score |
+|---|---|
+| SUS | **82.344**, which counts as good usability |
+| MAE | **0.3556**, which they read as accurate |
+
+### How we use it
+
+| We take | Why |
+|---|---|
+| **SUS** | A standard, free, ten question instrument. If we ever build an interface, this is how we measure it, and it is more than most papers in our review manage |
+| The habit of naming instruments | The Rahayu review found nobody does this. Naming ours is cheap and puts us ahead |
+
+| We leave | Why |
+|---|---|
+| Slope One and collaborative filtering | It needs a user rating matrix. We have no user ratings and no users |
+
+### Their weak point
+
+Same as everyone else in this group: no regulator behind the ingredients, no
+provenance, no availability. And an MAE on a rating prediction does not tell you
+whether the recommendation was medically sensible.
+
+---
+
+# GROUP B. INGREDIENTS, REGULATION AND CLINICAL VOCABULARIES
+
+---
+
+## B1. TOXIN knowledge graph (2025)
 
 ### Say this
 
@@ -1069,7 +1204,68 @@ ingredient.
 
 ---
 
-## B7. CosIng-KG (biobricks-ai)
+## B2. HaCKG (2025), a cosmetics graph with a neural network
+
+### Say this
+
+> This is the paper that trimmed one of my ideas, so I want to raise it myself.
+> They built a cosmetics knowledge graph of products and ingredients, then
+> trained a graph neural network on it to predict whether a product is halal. So
+> a cosmetics knowledge graph with a neural component already exists. Our angle
+> is still defensible, because they predict with a model and we would derive
+> from the ingredient list, but it is a smaller claim than I first thought.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Halal or Not: Knowledge Graph Completion for Predicting Cultural Appropriateness of Daily Products |
+| Authors | Van Thuy Hoang et al., South Korea |
+| Published | **IEEE Access**, 2025 |
+| Cited | **8** |
+| I read | The abstract |
+
+### What they did
+
+Their starting argument, which is useful to us: existing halal prediction looks
+at ingredients **one at a time** and therefore misses the relationships between
+products and their components.
+
+| Step | What |
+|---|---|
+| 1 | Build a knowledge graph of cosmetics, ingredients and their properties |
+| 2 | Pre-train a **relational graph attention network with residual connections** on that graph |
+| 3 | Fine-tune it on cosmetic data to predict halal status |
+
+A **graph attention network** is a neural network that learns by passing
+messages between connected nodes and learning which neighbours matter most.
+**Relational** means it also pays attention to what kind of link each edge is.
+
+### How we use it
+
+| We take | Why |
+|---|---|
+| **Their own argument** | They say ingredient-by-ingredient methods miss the relationships between products and ingredients. That is an argument for building a graph, made by somebody else, in an indexed IEEE journal |
+| The precedent | It proves a cosmetics knowledge graph is a publishable object |
+| An evaluation target | If our symbolic derivation and their learned prediction agree on most products, that is mutual validation. Where they disagree, the disagreement set is a research result |
+
+| We leave | Why |
+|---|---|
+| The neural network | We have no interaction data and our contribution is the resource itself |
+
+### The distinction we can still defend
+
+They **predict** halal status with a model, which gives a probability and no
+reason. We would **derive** it from the INCI list plus a curated ingredient
+list, and be able to cite the derivation. Prediction gives you a number.
+Derivation gives you a reason and a source.
+
+**Be honest that this weakens the halal idea.** Raising it yourself is far
+better than being told.
+
+---
+
+## B3. CosIng-KG (biobricks-ai)
 
 ### Say this
 
@@ -1102,7 +1298,56 @@ right now.
 
 ---
 
-## B8. DermO (2016)
+## B4. CCIBP (2023), a cosmetic ingredient platform
+
+### Say this
+
+> A cosmetic ingredient database published in Bioinformatics, which is a strong
+> journal. It covers regulations from several world regions, not just the EU,
+> plus physical properties and metabolic pathways. Two uses for us: it might be
+> a second ingredient source if Lebanon follows anything non-European, and it is
+> another precedent for a resource paper being publishable in a serious venue.
+
+### The facts
+
+| | |
+|---|---|
+| Title | CCIBP: a comprehensive cosmetic ingredients bioinformatics platform |
+| Authors | Linlin Gong et al., China |
+| Published | **Bioinformatics**, Oxford University Press, 2023 |
+| Cited | 2 |
+| Available at | design.rxnfinder.org/cosing |
+| I read | The abstract |
+
+### What they did
+
+Built a single platform holding, for cosmetic molecules:
+
+- regulations from **major regions of the world**, not only the EU
+- physicochemical properties
+- human metabolic pathways
+- plant information for natural ingredients
+
+It supports formulation analysis and efficacy component analysis.
+
+### How we use it
+
+| We take | Why |
+|---|---|
+| A possible second ingredient source | It covers non-EU regulation. Worth thirty minutes in sprint 2 to see whether it adds anything CosIng does not give us |
+| The precedent | A cosmetic ingredient resource published in Bioinformatics supports our argument that building a resource is a legitimate contribution |
+
+| We leave | Why |
+|---|---|
+| The metabolic pathway and synthetic biology material | We model retail products, not biology |
+
+### Their weak point
+
+Same shape as TOXIN: **all ingredients, no products**. Nothing you can buy.
+
+---
+
+## B5. DermO (2016)
 
 ### Say this
 
@@ -1222,7 +1467,7 @@ medical vocabularies. **We wrote six lines and got all of that.**
 | No doctor could review our concerns | A doctor opens DermO and checks every term in minutes |
 | Our medical claims rest on our own authority | They rest on an ontology built by clinicians and published in a peer reviewed journal |
 
-**This is the fix for the weakness in B3.** Hansanie and Silva interviewed
+**This is the fix for the weakness in A3.** Hansanie and Silva interviewed
 dermatologists and we did not. We cannot get a dermatologist quickly. But we can
 align to one that dermatologists already built, and say so.
 
@@ -1277,7 +1522,7 @@ category. Six lines of linking plus a body site property turns it into anatomy.
 
 ---
 
-## B9. D3X (2024)
+## B6. D3X (2024)
 
 ### Say this
 
@@ -1303,7 +1548,7 @@ being able to point at a 2024 example in a real medical journal justifies it.
 
 ---
 
-## B10. The halal flavouring ontology (2024)
+## B7. The halal flavouring ontology (2024)
 
 ### Say this
 
@@ -1347,6 +1592,914 @@ cosmetics knowledge graph with a neural network for halal prediction. So this is
 no longer novel on its own. Our angle is that they *predict* with a model, which
 gives a probability and no reason, while we would *derive* from the ingredient
 list and cite the derivation.
+
+---
+
+## B8. Klaschka (2015), natural does not mean safe
+
+### Say this
+
+> This one is not an ontology at all, and it is the most immediately useful
+> paper in the whole review. She went through every natural substance in the
+> INCI list and checked it against the EU hazard classification. Of the 655 that
+> appear in that inventory, **56 percent are classified as hazardous** and 53 are
+> classified as carcinogenic, mutagenic or toxic to reproduction. That gives us
+> a research question we can answer this week with data we already hold.
+
+### The facts
+
+| | |
+|---|---|
+| Author | Ursula Klaschka, Ulm University, Germany |
+| Published | Environmental Sciences Europe, 2015 |
+| Cited | **107** |
+| I read | The abstract |
+
+### What she did
+
+Took the INCI list, pulled out every substance of natural origin, and checked
+each one against the EU's classification and labelling inventory, which is the
+official register of which chemicals are formally classified as hazardous.
+
+### Her numbers
+
+| | |
+|---|---|
+| Natural substances in the INCI list | **1,358**, mostly plant, some animal, fungal or bacterial |
+| Of those, present in the EU classification inventory | **655** |
+| **Classified as hazardous** | **56%** |
+| Classified for human health hazards | 38% |
+| Classified for effects on skin and eyes | 35% |
+| **Classified as carcinogenic, mutagenic or toxic to reproduction** | **53 substances** |
+
+She also notes that the classifications themselves are inconsistent: some
+ordinary food plants carry severe classifications, while known sensitising
+plants carry none.
+
+### How we use it, and this is the good part
+
+Our dataset has a `free_from` column and product descriptions full of the words
+natural and clean. **This is peer reviewed evidence, with 107 citations, that
+natural does not mean safe.**
+
+Which gives us a question nobody else can answer:
+
+> Across 12,629 products, do the ones marketed as natural actually contain fewer
+> hazardous ingredients than the ones that are not?
+
+We hold all three pieces already: the formulas, the marketing claims, and the
+register. **No new data collection.** It is a finding sitting in the dataset
+waiting to be computed, and it is exactly why the master plan includes a
+`NaturalClaimProduct` defined class.
+
+### Their weak point
+
+Nothing to attack. It is a regulatory analysis and it is careful. Its only
+limit for us is that it has substances and no products, which is the same shape
+as TOXIN and CCIBP.
+
+---
+
+## B9. MVFM (2026), reading concentration from the label
+
+### Say this
+
+> A very recent, very small paper with one idea I need. EU law requires cosmetic
+> claims not to mislead, but it does not require them to be supported by the
+> composition. So a cream sold as barrier repairing does not have to contain
+> barrier lipids. Their method uses the **position** of ingredients in the INCI
+> list to check. That is why our ontology has to record ingredient position, not
+> just which ingredients are present.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Predictive Analysis of Cosmetic Formulations: A Multi-Vector INCI Mapping Methodology |
+| Author | Rusana Plonsak |
+| Published | Journal of Applied Cosmetology, 2026 |
+| Cited | 0. It is brand new |
+| I read | The abstract |
+
+### What they did
+
+The insight first: **INCI lists are in order of concentration**, down to one
+percent. Below one percent the order is free. So the first regulated
+preservative or fragrance marker in the list is roughly where the one percent
+line sits.
+
+| Step | What |
+|---|---|
+| 1 | Find the first regulated preservative or fragrance marker in the INCI list |
+| 2 | Treat its position as the boundary. Everything above it is present at meaningful concentration |
+| 3 | Score those ingredients on three axes: **Hydration, Lipid, Structural**, each 0 to 3 |
+| 4 | Compare the resulting profile against what the label claims |
+
+### Their result
+
+Three products, one evaluator. Segmentation worked on all three. Two matched
+their claims. **The third, sold as anti-aging, scored H=4, L=7, S=6**, a
+lipid-heavy profile that looks more like a texture cream than an active
+treatment. They also found two regulated fragrance allergens in its active
+zone.
+
+### How we use it
+
+| We take | Why |
+|---|---|
+| **INCI position as a signal** | This is the justification for reifying `IngredientListing` with a position number in our ontology. Without position we lose the only concentration information a consumer ever gets |
+| The research question | Their finding is that a marketing claim can be unsupported by the composition. That is our evidence-level argument, arrived at from the chemistry side |
+
+### Their weak point, which they state themselves
+
+Three products, one evaluator, and they say plainly that larger validation and
+inter-rater reliability remain to be done.
+
+**Which is our opening.** We could run their method across 11,802 formulas
+automatically and report it at scale. That would be the first large sample test
+of whether cosmetic claims are compositionally grounded, and it is the
+validation they say is missing.
+
+---
+
+## B10. Landau et al. (2023), how to read an ingredient list
+
+### Say this
+
+> A clinical review in Dermatologic Clinics explaining how to read an INCI list,
+> written for dermatologists, because dermatologists are asked to recommend
+> cosmetics but are never taught to read the label. I cite it in the methods
+> chapter when I explain why parsing these lists is hard, and it also widens who
+> our system is for.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Hacking the International Nomenclature of Cosmetic Ingredients List |
+| Authors | M. Landau et al., Israel |
+| Published | Dermatologic Clinics, Elsevier, 2023 |
+| Cited | 4 |
+| I read | The abstract |
+
+### What they did
+
+A narrative review giving dermatologists a guide to the structure of the INCI
+list, together with the basics of how cosmetic products are formulated. Their
+opening observation is that during training and afterwards, dermatologists
+rarely learn about cosmetic ingredients unless one causes a medical problem
+such as contact dermatitis.
+
+### How we use it
+
+**A citable source** for how INCI lists are structured, which we need in the
+methods chapter to explain why extracting them was difficult.
+
+**And an argument about our audience.** If trained dermatologists find INCI
+hard to read, then a system that reads it for them has a professional user, not
+just a consumer one. **Pharmacists in Beirut are a realistic first audience**,
+and that widens who this thesis is for.
+
+---
+
+# GROUP C. ONTOLOGY RECOMMENDERS IN OTHER FIELDS
+
+Nobody has solved our problems in skincare. Somebody has solved most of them in
+food, in shopping, or in academic papers. This is where the mechanisms come
+from.
+
+---
+
+## C1. Middleton, Shadbolt and De Roure (2004), the paper that started it
+
+### Say this
+
+> This is the highest ranked paper in my whole review, in ACM Transactions on
+> Information Systems, cited in the thousands. It is the paper that established
+> that using an ontology in a recommender is a serious research position. Its
+> three findings are my three arguments, and the second one is my answer to the
+> cold start problem.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Ontological User Profiling in Recommender Systems |
+| Authors | Stuart Middleton, Nigel Shadbolt, David De Roure, University of Southampton |
+| Published | **ACM Transactions on Information Systems**, 22(1), 54 to 88, 2004 |
+| Venue quality | **Q1, the best venue in my review** |
+| Cited | In the thousands |
+| I read | The abstract and secondary sources |
+
+### What they built
+
+Two working systems, **Quickstep** and **Foxtrot**, recommending academic
+papers. The novelty is how they describe a user. Instead of a bag of keywords,
+the user's interests are expressed **in terms of a topic ontology**, built from
+watching what they read plus asking them directly.
+
+### Their three findings, and how each becomes our argument
+
+| Their finding | Our use |
+|---|---|
+| **Ontological inference improves profiling.** If you are interested in a subtopic, the system concludes you are also interested in the parent topic | Our concerns have a hierarchy. Interest in post-acne marks implies interest in hyperpigmentation. We get that for free from the tree |
+| **External ontological knowledge bootstraps a recommender.** They started new users from an existing publication database rather than from nothing | **This is our cold start answer.** A new user in Beirut has no history. But the ontology already knows what suits combination skin, so we can recommend on day one. A collaborative filtering system simply cannot |
+| **Showing users their own profile and letting them correct it improves accuracy** | A user can see and edit "the system thinks your skin is oily and you dislike fragrance". That is an interface argument for using an ontology |
+
+### How we use it
+
+**Cite it first in the chapter.** It is the reference that makes the whole
+approach legitimate rather than eccentric. And finding number two is the answer
+to the hardest question anyone will ask about a recommender with no users.
+
+### The outside-the-box idea
+
+Their unobtrusive monitoring, translated to Lebanon, is not browsing history.
+**It is the receipt.** Beirut pharmacies are small and repeat custom is normal.
+A profile built from what somebody actually re-bought is more honest than one
+built from what they clicked, and our `shops_in_lebanon` and price columns are
+the beginning of a purchase-side model no global system has.
+
+---
+
+## C2. FoodKG (2019), the closest thing to us in any field
+
+### Say this
+
+> If I read one paper outside skincare, it is this one. The shape of their
+> problem is nearly identical to ours. They combined recipes, nutrition data
+> from an authority, food taxonomies and links to existing ontologies into one
+> graph, then built a service that finds a recipe from the ingredients you
+> already have while respecting hard constraints like allergies. Swap recipes
+> for products and nutrition for CosIng and that is us.
+
+### The facts
+
+| | |
+|---|---|
+| Title | FoodKG: A Semantics-Driven Knowledge Graph for Food Recommendation |
+| Authors | Haussmann, Seneviratne, Chen, Ne'eman, Codella, Chen, McGuinness, Zaki |
+| Institutions | Rensselaer Polytechnic Institute and IBM Research |
+| Published | **ISWC 2019**, the top semantic web conference. Rank A |
+| Published artefact | **Yes**, foodkg.github.io |
+| I read | The abstract, the project site and secondary sources |
+
+### The analogy, spelled out
+
+| FoodKG | Us |
+|---|---|
+| recipes | products |
+| ingredients | INCI ingredients |
+| nutrition data from an authority | **CosIng from the European Commission** |
+| food taxonomies | product type taxonomy |
+| allergies as hard constraints | **the EU 26 declarable allergens** |
+| what can I cook with what is in my kitchen | what can I buy in my pharmacy |
+| health goals | skin concerns |
+
+### Four practices we copy exactly
+
+| Practice | Why |
+|---|---|
+| They present the **construction process itself** as the contribution | A top venue accepted graph construction as a research result. That is the precedent for our whole thesis |
+| They state a **maintenance plan** | Every skincare ontology in our review is a snapshot with no plan for staying current. Saying how ours updates is cheap and rare |
+| **Several applications on one graph** | Question answering, recipe suggestion, constraint satisfaction. We should present our graph as infrastructure, not as one app |
+| **Hard constraints, not preferences** | An allergy is not something to weigh in a score. It is a filter. Our allergen and restriction data works the same way, and this is exactly where an ontology beats a neural recommender outright |
+
+---
+
+## C3. Constrained question answering over FoodKG (2021)
+
+### Say this
+
+> The follow-up to FoodKG, and it changed how I think about what we should
+> build. They stopped treating recommendation as ranking and started treating it
+> as answering a question with constraints attached. A Lebanese user does not
+> want 12,629 products ranked. They want to ask for something for dry skin,
+> under fifteen dollars, that they can actually buy in Hamra. All four of those
+> are real columns in our data.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Personalized Food Recommendation as Constrained Question Answering over a Large-scale Food Knowledge Graph |
+| Authors | Yu Chen, Ananya Subburathinam, Ching-Hua Chen, Mohammed Zaki |
+| Published | WSDM 2021, arXiv 2101.01775 |
+| Cited | Over 100 |
+| I read | The abstract |
+
+### What they did
+
+Take the user's requirements, turn them into constraints, and answer over the
+graph subject to those constraints. The output is not a ranked list with a score
+attached, it is the set of things that satisfy every requirement.
+
+### Why this matters to our design
+
+**It tells us what our system should be.** Not a recommender that ranks. A
+question answerer that filters.
+
+Our four hard constraints:
+
+| Constraint | Our column |
+|---|---|
+| suits this skin type | `skin_type`, with its evidence level |
+| contains no declarable allergen | derived from `ingredients` and CosIng |
+| under a price ceiling | `price_usd`, `price_lbp` |
+| buyable in Lebanon | `shops_in_lebanon` |
+
+It also makes evaluation easier. **A constraint is either satisfied or it is
+not**, which is checkable without a user study. That matters a great deal to us
+because we have no users.
+
+---
+
+## C4. Di Noia, Ostuni and colleagues, similarity without ratings
+
+### Say this
+
+> An Italian group who worked out how to recommend using only the links an item
+> has in public data, with no ratings at all. Two films are similar if they
+> share a director, a genre, a period. For us: two products are similar if they
+> share ingredient functions, a restriction profile, a concern, a price band.
+> Our rating column is only half full and we have no user history, so this is
+> the only similarity measure available that uses everything we collected.
+
+### The facts
+
+| | |
+|---|---|
+| Key papers | Linked Open Data to Support Content-based Recommender Systems, I-SEMANTICS 2012; Top-N Recommendations from Implicit Feedback Leveraging Linked Open Data, **RecSys 2013**; Using Linked Open Data in Recommender Systems, WIMS 2015 |
+| Institution | Politecnico di Bari, Italy |
+| Venue | RecSys is the top recommender systems conference |
+| Data | DBpedia, Freebase, LinkedMDB. Movies |
+| I read | Abstracts and secondary sources |
+
+### The mechanism
+
+A **semantic vector space model**. Each item becomes a list of numbers, but the
+dimensions are not words. They are the item's **links** in public data. Films
+sharing a director score close together.
+
+### The limitation they name themselves, which we have measured
+
+Their stated future work is better matching rules and resource identification.
+In plain words: **connecting your item to the right external entity is the hard
+part.**
+
+We know this already, and we can put a number on it. Our fuzzy matching
+experiment showed `token_set_ratio` scoring a category page 100 against a full
+product name, and our third-party database pass produced an error rate between
+**19 and 33 percent**.
+
+**We measured, on our own data, the exact failure a leading group named as their
+open problem.** That is a strong paragraph for the thesis and worth saying.
+
+### The outside-the-box idea
+
+They used public data to enrich items that were thin. Our items are unusually
+rich already. So invert it: **use public data to enrich the shops.** Wikidata
+and OpenStreetMap know where Beirut pharmacies are. A system that knows a
+product is available fifteen minutes' walk away is doing something no cosmetics
+recommender has done, and geography is the one dimension where a Lebanese thesis
+has data nobody else can get.
+
+---
+
+## C5. AliCoCo (2020), the idea that reframes the whole design
+
+### Say this
+
+> Alibaba, published at SIGMOD, which is one of the very best database venues.
+> Their argument is that every product ontology describes what a product **is**,
+> while shoppers think about what they **need**, and that gap is why shopping
+> feels stupid. So they made needs into entities in their own right. Our
+> concerns column is already a user need, sitting in a product schema pretending
+> to be an attribute. If I want one idea that makes this thesis memorable rather
+> than merely competent, it is this one.
+
+### The facts
+
+| | |
+|---|---|
+| Title | AliCoCo: Alibaba E-commerce Cognitive Concept Net |
+| Authors | Xusheng Luo et al., Alibaba Group and Shanghai Jiao Tong University |
+| Published | **ACM SIGMOD 2020**. Rank A star |
+| Follow-up | AliCoCo2, SIGKDD 2021 |
+| Code | github.com/alicogintel/AliCoCo |
+| I read | The abstract, the repository and secondary sources |
+
+### What they did
+
+They formalised **user needs as first class entities**, which they call
+e-commerce concepts. Not "moisturiser" but "outdoor barbecue", "keeping warm in
+winter", "getting ready for a beach holiday". Then they connected those needs to
+the items that serve them, extracted semi-automatically at national scale, and
+deployed it in production.
+
+### Why a need has to be an entity and not an attribute
+
+| A product attribute can | A need entity can |
+|---|---|
+| be attached to one product | be satisfied by a **combination** of products |
+| hold a value | carry a **budget** |
+| be filtered on | carry a **season**, a **place**, a **constraint** |
+| | be reasoned about in its own right |
+
+### The outside-the-box idea, and it is the strongest one we have
+
+**Lebanese needs are not global needs.**
+
+- a routine under twenty dollars a month
+- products that do not need refrigeration
+- something for a bride
+- a routine I can buy entirely in one pharmacy
+
+Every one of those is expressible in our data, because we have prices in lira,
+shop-level availability and multi-shop comparison. **Modelling Lebanese consumer
+needs as ontology entities, grounded in a real product catalogue, is a
+contribution nobody can replicate without our dataset.**
+
+It is also the least certain of our five claims, so attempt it after the four
+safe ones.
+
+---
+
+## C6. Guo et al. (2022), the survey that positions our whole thesis
+
+### Say this
+
+> The main survey of knowledge graph recommenders, in IEEE TKDE, cited over a
+> thousand times. It sorts every method into three families. What matters to me
+> is that **all three assume you already have a user interaction matrix and a
+> knowledge graph for your domain.** For skincare in a local market, no such
+> graph exists. So we sit upstream of the entire survey. We build the thing it
+> assumes you already have.
+
+### The facts
+
+| | |
+|---|---|
+| Title | A Survey on Knowledge Graph-Based Recommender Systems |
+| Authors | Qingyu Guo et al., Chinese Academy of Sciences, Microsoft Research Asia, Rutgers |
+| Published | **IEEE Transactions on Knowledge and Data Engineering**, 34(8), 3549 to 3568, **2022** |
+| Cited | Over a thousand |
+| I read | The abstract and the preprint |
+
+*Careful: cite the 2022 TKDE version, not the 2020 arXiv preprint. I nearly got
+that wrong.*
+
+### Their three families
+
+| Family | How the graph is used | Strength | Weakness |
+|---|---|---|---|
+| **Embedding based** | turn entities into vectors and feed a model | scales well | the reasoning disappears, you cannot explain a recommendation |
+| **Path based** | find meaningful paths between user and item | **explainable**, the path is the reason | expensive, and designing paths needs domain knowledge |
+| **Unified** | propagate across the graph, combining both | best benchmark accuracy | complex, needs a lot of interaction data |
+
+### How we use it, and this is the important part
+
+**Say this sentence and the "you have no users" question is answered before it
+is asked:**
+
+> The survey classifies methods for *using* a knowledge graph in recommendation,
+> and it assumes such a graph exists for the domain. For skincare in a local
+> market, it does not. This thesis constructs one.
+
+That turns our biggest apparent weakness into a scope statement.
+
+---
+
+## C7. OntoCommerce (2019)
+
+### Say this
+
+> An e-commerce recommender built on an ontology, with a different way of
+> measuring how similar two products are. I take one thing from it: they report
+> a **false discovery rate**, meaning how often the system recommends something
+> it should not have. In a domain where a wrong recommendation touches
+> somebody's skin, that number matters more than accuracy.
+
+### The facts
+
+| | |
+|---|---|
+| Title | OntoCommerce: an ontology focused semantic framework for personalised product recommendation |
+| Authors | G. Deepak et al., India |
+| Published | International Journal of Computer Aided Engineering and Technology, 2019 |
+| Cited | **38** |
+| I read | The abstract |
+
+### What they did
+
+Combined the user's query, their recorded navigation and their profile. Product
+similarity is computed with **enriched normalised pointwise mutual
+information**, which measures how much more often two things appear together
+than chance would predict. They also add "parametric fuzzification" to widen the
+set of things worth recommending.
+
+### Their results
+
+88.68 percent average accuracy with a **false discovery rate of 0.13**.
+
+### How we use it
+
+| We take | Why |
+|---|---|
+| **The false discovery rate as a metric** | It measures how often you recommend something you should not. For a safety-relevant domain that is arguably more important than accuracy, and no cosmetics paper in our review reports it. Adopting it, and justifying it on safety grounds, is a small original move |
+| Pointwise mutual information | An alternative similarity measure worth knowing about when we choose ours |
+
+| We leave | Why |
+|---|---|
+| Navigation logs and fuzzification | We have no user navigation data |
+
+### Their weak point
+
+"Best in class" is a strong phrase for the evidence given, and the same three
+absences as everyone else: no regulator, no provenance, no availability.
+
+---
+
+## C8. E-Prod (2023), the industrial version of what we built by hand
+
+### Say this
+
+> A Turkish state-funded project that tracks live e-commerce sites in real time
+> and pushes the product information straight into an ontology. It is
+> essentially the automated, continuous version of the scraping we did by hand.
+> It also has the best evaluation in this group: 250 real users and a proper
+> baseline.
+
+### The facts
+
+| | |
+|---|---|
+| Title | An ontology based product recommendation system for next generation e-retail |
+| Authors | Ali Murat Tiryaki et al., Turkey |
+| Published | Journal of Organizational Computing and Electronic Commerce, 2023 |
+| Cited | 4 |
+| Domain | clothing, shoes, bags |
+| I read | The abstract |
+
+### What they did
+
+| Step | What |
+|---|---|
+| 1 | **Track several e-commerce systems in real time** |
+| 2 | Transfer the product information into the ontology model continuously |
+| 3 | Learn user preferences by watching behaviour |
+| 4 | Match products to preferences semantically, combined with machine learning |
+
+### Their results
+
+Tested with **over 250 registered users** against traditional collaborative
+recommendation:
+
+| Metric | Score |
+|---|---|
+| Accuracy | 92.79% |
+| Precision | 92.93% |
+| Recall | 90.58% |
+
+**That is a better evaluation than any skincare ontology paper in our review**:
+real users, a stated baseline, three metrics.
+
+### How we use it
+
+**The population architecture.** They prove a scraping pipeline can run
+continuously rather than as a one-off. Our six Lebanese retailers could be
+re-read on a schedule, which would turn our dataset from a snapshot into a live
+resource. **That is the single biggest upgrade available to the dataset paper
+and it needs no new modelling.**
+
+### Their weak point
+
+No regulator, no provenance, no availability modelling and no safety dimension.
+Clothes cannot hurt you. Skincare can, and that difference is the whole reason
+our extra columns exist.
+
+---
+
+## C9. Alaa et al. (2021), ontologies have to change over time
+
+### Say this
+
+> Their criticism is that everyone builds their ontology once from a snapshot,
+> but the world keeps moving, so a one-shot ontology goes stale. For us that is
+> not theoretical. Lebanese prices move weekly. The good news is that our named
+> graph design already answers their criticism by construction, and I can say
+> so.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Improving Recommendations for Online Retail Markets Based on Ontology Evolution |
+| Authors | Rana Alaa et al., Egypt |
+| Published | Electronics, MDPI, 2021 |
+| Cited | 14 |
+| I read | The abstract |
+
+### What they did
+
+Proposed a semi-automatic ontology building method plus an **ontology evolution**
+subsystem, so that the model changes as purchase data accumulates.
+Recommendation is produced by reasoning over the ontology.
+
+### How we use it
+
+**This gives us the citation for the maintenance section**, which the LOT
+methodology requires and which nobody in the skincare group has.
+
+And our architecture already answers it. Because each data source lives in its
+own named graph, we can **reload `graph:lb-retail` weekly without touching
+anything else**. The design solves their problem by construction, and being able
+to say that is worth a paragraph.
+
+---
+
+## C10. Lahoud et al. (2022), the Lebanese precedent
+
+### Say this
+
+> A Lebanese team published an ontology recommender in a Springer journal,
+> evaluated on Lebanese high school students. So a Lebanon-focused ontology
+> recommender is publishable, in a real journal, with citations. That answers
+> the question of whether our local scope is a limitation before anybody asks
+> it.
+
+### The facts
+
+| | |
+|---|---|
+| Title | A comparative analysis of different recommender systems for university major and career domain guidance |
+| Authors | Christine Lahoud et al., **Lebanon** |
+| Published | Education and Information Technologies, Springer, 2022 |
+| Cited | **36** |
+| I read | The abstract |
+
+### What they did
+
+Compared **five** approaches on the same case study of Lebanese high school
+students: user-based collaborative filtering, item-based collaborative
+filtering, demographic recommendation, knowledge-based with case-based
+reasoning, ontology, and hybrids of those.
+
+### Their results
+
+The hybrid, combining knowledge-based reasoning with collaborative filtering,
+case-based reasoning and an ontology, reached 98 percent similar cases, 95
+percent personalised, 95 percent usefulness and 92.5 percent satisfaction.
+
+### How we use it, three ways
+
+**One.** A Lebanon-focused ontology recommender is publishable. Local scope is
+not a weakness.
+
+**Two.** The hybrid beat every pure approach, which supports our future work
+direction.
+
+**Three, and practically.** These are **Lebanese academics working on ontology
+recommenders**. They are potential examiners, reviewers, collaborators, or at
+minimum a friendly audience for a seminar. Worth finding out where they are.
+
+---
+
+# GROUP D. REVIEWS AND EVALUATION
+
+These do not build anything. They tell us what counts as good, and one of them
+hands us our gap statement.
+
+---
+
+## D1. Rahayu et al. (2022), the review that hands us the gap
+
+### Say this
+
+> This is the single most useful citation in my whole review, and it is not even
+> about skincare. They systematically reviewed 28 ontology-based recommender
+> systems and found two things: these systems rarely use any named method for
+> building the ontology, and **not one of the 28 described how they evaluated
+> it.** Not one. So naming our method and reporting our evaluation is not
+> tidiness. In this field it counts as a contribution.
+
+### The facts
+
+| | |
+|---|---|
+| Title | A systematic review of ontology use in E-Learning recommender system |
+| Authors | Nur Wahyu Rahayu et al., Indonesia |
+| Published | Computers and Education: Artificial Intelligence, 2022 |
+| Cited | **137** |
+| Sample | 28 journal articles |
+| I read | The abstract and the quoted findings |
+
+### The two sentences
+
+> "ontology-based recommender systems seldom use the methodology of building
+> ontologies and hardly use other ontology methodologies"
+
+> "none of the primary studies described ontology evaluation methodologies"
+
+They also note that standards for user profiles and object metadata are rarely
+adopted, which is the vocabulary reuse argument again.
+
+### How we use it
+
+Two cheap actions become contributions:
+
+| Action | Cost | Effect |
+|---|---|---|
+| Name MOMo and LOT and follow them | one paragraph plus discipline | ahead of most of a 28 paper sample |
+| Run OOPS! and FOOPS! and report the numbers | one afternoon | ahead of all of it |
+
+**Put this in the introduction, not just the related work.** It justifies the
+entire methodological posture of the thesis in one reference.
+
+---
+
+## D2. Tarus et al. (2017), the review, and why an ontology at all
+
+### Say this
+
+> The standard review of ontology-based recommenders, in Artificial Intelligence
+> Review, cited 451 times. Its conclusion is that using an ontology for
+> knowledge representation improves recommendation quality, and that combining
+> it with other techniques improves it further. When somebody asks why an
+> ontology at all, this is the reference with 451 citations behind it.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Knowledge-based recommendation: a review of ontology-based recommender systems for e-learning |
+| Authors | John Tarus, Zhendong Niu, Ghulam Mustafa |
+| Published | Artificial Intelligence Review, Springer, 2017 |
+| Cited | **451** |
+| I read | The abstract |
+
+### What they did
+
+Reviewed journal papers from 2005 to 2014, categorised the recommendation
+techniques used, the knowledge representation choices, the ontology types and
+languages, and the kinds of resource recommended.
+
+### How we use it
+
+**One line, kept ready.** Ontologies improve recommendation quality, and
+hybridising helps. Cited 451 times, so nobody will argue.
+
+---
+
+## D3. Tarus et al. (2017), the hybrid, and our cold start answer
+
+### Say this
+
+> Same lead author, different paper, in a Q1 Elsevier journal, cited 277 times.
+> They state explicitly that ontological domain knowledge **alleviates cold
+> start and data sparsity**. That is exactly our argument for why an ontology
+> works when we have no user history, with a strong citation attached.
+
+### The facts
+
+| | |
+|---|---|
+| Title | A hybrid knowledge-based recommender system for e-learning based on ontology and sequential pattern mining |
+| Authors | John Tarus, Zhendong Niu, Abdallah Yousif |
+| Published | Future Generation Computer Systems, Elsevier, **Q1**, 2017 |
+| Cited | **277** |
+| I read | The abstract |
+
+### What they did
+
+Four steps: build the ontology, compute similarity using ontological domain
+knowledge, generate a top-N list with collaborative filtering, then reorder it
+using sequential pattern mining, which finds common orderings in how people
+consume things.
+
+### How we use it
+
+**The division of labour is transferable wholesale.** The ontology handles what
+you know about the domain. The learned component handles what you know about
+users. That is exactly the split we should propose for future work, and it means
+**our ontology is the half that has to exist first.**
+
+| We leave | Why |
+|---|---|
+| Sequential pattern mining and collaborative filtering | No user sequences, no ratings matrix |
+
+---
+
+## D4. George and Lal (2019), the three word answer
+
+### Say this
+
+> A review in Computers and Education, cited 183 times. Its useful contribution
+> to me is a phrase: ontologies give you reusability, reasoning ability, and
+> support for inference. That is the three word answer when somebody asks what
+> an ontology buys us over a spreadsheet.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Review of ontology-based recommender systems in e-learning |
+| Authors | G. George and A. M. Lal, India |
+| Published | Computers and Education, Elsevier, **Q1**, 2019 |
+| Cited | **183** |
+| I read | The abstract |
+
+### How we use it
+
+Keep the phrasing ready: **reusability, reasoning, inference**. Short, citable,
+and it lands in a conversation.
+
+---
+
+## D5. COPPER (2025), the template for our ontology chapter
+
+### Say this
+
+> This is not about skincare at all. It is an ontology for personalised physical
+> activity advice. I include it because it is the best example I found of what a
+> good ontology paper looks like in 2025, and I intend to match its structure.
+> Modular design, openly published, and evaluated by competency questions and
+> use cases rather than by accuracy.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Development and evaluation of the COPPER Ontology |
+| Authors | M. Braun et al., Europe |
+| Published | International Journal of Behavioral Nutrition and Physical Activity, **Q1**, 2025 |
+| Cited | 4 |
+| Size | **288 classes, 64 object properties, 9 data properties** |
+| I read | The abstract, carefully |
+
+### What they did, and this is the structure to copy
+
+| Phase | What |
+|---|---|
+| Specification | literature research, use case scenarios, decision-tree workshops |
+| Conceptualisation | combined existing theory, classification systems, end-user input, expert input and datasets |
+| Formalisation | logic rules written, then translated into OWL using Protégé |
+| Modules | an upper ontology plus lower ones for **personal profile, planning, activity, context, barrier and coping strategy** |
+| Evaluation, part 1 | the **process** evaluated against OBO Foundry principles |
+| Evaluation, part 2 | the **ontology** checked for logical consistency |
+| Evaluation, part 3 | the **recommendations** evaluated with competency questions and use cases |
+
+They also state being openly available as one of their three novelty claims.
+
+### How we use it
+
+**Read this paper and match its structure.** If we want to know what our
+ontology chapter should contain, it is here: a modular design, a stated process,
+three layers of evaluation, and open publication as a contribution in itself.
+Even the size, 288 classes, is a realistic target for us.
+
+### The outside-the-box idea
+
+**They have a BARRIER module**: the things that stop somebody doing the activity.
+Our equivalent is unavailability, price and the currency crisis. Nobody in
+cosmetics models barriers, and "barrier" is a better frame than "availability"
+because it covers price, stock, distance and season in one concept. Worth
+considering renaming our Lebanon module around it.
+
+---
+
+## D6. FEVR (2022), the shield for our evaluation choice
+
+### Say this
+
+> A framework for evaluating recommender systems, in ACM Computing Surveys,
+> cited 283 times. Its core argument is that the way you evaluate must follow
+> what you are trying to achieve. Our goal is verifiable correctness with a
+> stated reason, not ranking accuracy. So precision and recall are the wrong
+> instruments, and this is the citation that says so.
+
+### The facts
+
+| | |
+|---|---|
+| Title | Evaluating Recommender Systems: Survey and Framework |
+| Authors | Eva Zangerle and Christine Bauer, Austria |
+| Published | **ACM Computing Surveys**, 2022 |
+| Cited | **283** |
+| I read | The abstract |
+
+### What they did
+
+Consolidated the scattered knowledge on recommender evaluation into one
+framework, FEVR, which organises the whole space: what your goal is, which
+method fits, what data you need, which metrics apply.
+
+### How we use it
+
+**This is the answer to "why no precision and recall".** A 283-citation ACM
+Computing Surveys paper says the evaluation setting must follow the goal. Our
+goal is correctness that can be checked, so our four layers are structural,
+functional, logical and comparative. One sentence, fully defended.
 
 ---
 
@@ -1589,3 +2742,78 @@ In the repository, under `literature/`. The README there is the shortest route
 in. There is a spreadsheet with all 59 papers, a comparison sheet, the full
 ontology design with every class and property, the tool choices, and the
 related work chapter already compiling in LaTeX.
+
+---
+
+# PART 6. APPENDIX, THE OTHER 25 PAPERS
+
+Part 2 covered the 34 papers that shape our design. These 25 are the rest of
+the 59 in the spreadsheet: deep learning background, hybrid neural work, and
+tooling. One line each, so nothing is unaccounted for.
+
+## Deep learning, the alternative we position against
+
+| Paper | Why it is in the review |
+|---|---|
+| **Lee et al. (2024)**, Journal of Cosmetic Dermatology | The direct rival. A neural network estimates cosmetic efficacy **from the ingredient list**, combined with AI skin analysis. Same starting point as us, no ontology. Corporate, from lululab in Seoul. **This is the one to answer directly** |
+| **He et al. (2017)**, NCF, WWW | The standard neural recommender baseline. Needs a user item matrix, which we do not have |
+| **Zhang et al. (2019)**, ACM Computing Surveys | The reference survey for neural recommenders. Cite once to cover the whole family |
+
+**The one line that covers all three:** every method here learns from user
+behaviour, and our dataset contains none by design, because it is a product
+resource rather than an interaction log.
+
+## Hybrid, graph plus neural, which is our future work
+
+| Paper | Why it is in the review |
+|---|---|
+| **CKE** (Zhang et al., KDD 2016) | The first of the four canonical models. Learns item representations from a graph and from ratings together |
+| **RippleNet** (Wang et al., CIKM 2018) | Spreads user preference outward through the graph like ripples |
+| **KGAT** (Wang et al., KDD 2019) | Graph attention over a collaborative knowledge graph. Its comparison table tells us the cost profile of the whole family |
+| **KPRN** (Wang et al., **AAAI 2019**) | **The important one.** Encodes the path between user and item, so the path *is* the explanation. The neural cousin of a reasoner producing a justification |
+| **Explanation path quality** (Balloccu et al., 2022) | Optimises paths for recency, popularity and diversity. For a safety domain the right criterion would be **verifiability**, which nobody has proposed |
+| **RDF2Vec** (Ristoski and Paulheim, ISWC 2016) | Walks the graph, treats each walk as a sentence, applies word2vec |
+| **OWL2Vec\*** (Chen et al., Machine Learning, 2021) | **The one we could use now.** Unlike everything else here it needs an ontology, not a user log. Evaluated on class membership prediction, which maps onto our missing size and rating values |
+| **Ali et al. (2026)**, J. Biomedical Informatics | **Cite in the introduction.** Grounding an LLM in an ontology took clinical QA from 37% to 98% accuracy and cut hallucination from 63% to 1.7% |
+| **LLMs4OL** (ISWC challenge, 2024 and 2025) | Three tasks: term typing, taxonomy discovery, relation extraction. Our free-text benefits and concerns are exactly those tasks |
+| **Shimizu and Hitzler (2024)** | A position paper arguing modular ontologies matter **more** in the LLM era, from the authors of the method we adopted |
+
+**The pattern across all of them:** every model assumes a user interaction
+matrix and treats the knowledge graph as side information. **Our position is the
+mirror image.** The graph is the contribution and the interactions do not exist
+yet.
+
+## Methods for building an ontology
+
+| Paper | Why it is in the review |
+|---|---|
+| **Noy and McGuinness (2001)**, Ontology Development 101 | The teaching guide everyone cites. Its class-versus-individual test is what told us Annex entries are individuals |
+| **LOT** (Poveda-Villalón et al., Eng. Applications of AI, 2022) | **Our publication method.** Four activities: requirements, implementation, publication, maintenance. Built around reusing published terms and publishing your result, which are our two criticisms of the field |
+| **MOMo** (Shimizu et al., Semantic Web, 2022) | **Our design method.** Modules and design patterns, with graphical diagrams as the way you elicit knowledge. Names four reasons ontology reuse fails, and we have hit three of them |
+| **eXtreme Design** (Blomqvist et al., 2016) | The parent of MOMo. Cite both to show the method has a twenty year lineage |
+| **Ontology Design Patterns book** (Hitzler et al., 2016) | Where the **n-ary relation pattern** is defined. That is the name for our two reifications, and naming it turns improvisation into method |
+| **Grau et al. (2008)**, JAIR, 453 citations | The formal theory of safe ontology reuse. **This justifies not importing all 116 OntoCosmetic classes**: importing wholesale can change the meaning of your own terms |
+| **MODL** (Shimizu et al., 2019) | A catalogue of design patterns. Look here before inventing one |
+
+## Population and validation tools
+
+| Tool or paper | Why it is in the review |
+|---|---|
+| **R2RML** (W3C, 2012) | The standard for describing how tabular data becomes RDF |
+| **Morph-KGC** (Arenas-Guerrero et al.) | The engine we will use. Built on pandas, handles large CSVs, benchmarked as more scalable than the alternatives |
+| **PE-TRE** (O'Sullivan et al., 2025) | **The precedent for our evidence module.** They applied PROV-O to create a derived ontology **following the four step LOT methodology**, for audit. That is our exact plan, already published |
+| **SWRL** (Horrocks et al., 2005) | The rule language. Also warns that consistency becomes undecidable, and note that HermiT ignores SWRL **silently** |
+| **PROV-O** (W3C, 2013, 784 citations) | Our provenance vocabulary. Designed to be specialised, which is exactly what we do |
+| **SHACL** (W3C, 2017) | Validation. Where `validate_dataset.py` moves to |
+| **OOPS!** (Poveda-Villalón et al., 2014) | 41 design pitfalls, graded. One afternoon for a real evaluation number |
+| **FOOPS!** (Garijo et al., 2021) | 24 FAIR checks. Since we criticise everyone for not publishing, we measure our own |
+
+---
+
+## The one thing to remember about this appendix
+
+If a supervisor asks about anything in it, the honest answer is:
+
+> Those are background. They are in the review so the chapter is complete and so
+> I can position our work, but they are not what I am building. The 34 papers in
+> the main sections are the ones that shaped the design.
