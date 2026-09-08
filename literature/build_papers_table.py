@@ -463,6 +463,24 @@ ws.freeze_panes = "C6"
 ws.sheet_view.showGridLines = False
 ws.sheet_view.zoomScale = 90
 
+# ------------------------------------------------ make every tab printable
+for name in wb.sheetnames:
+    s_ = wb[name]
+    s_.page_setup.orientation = "landscape"
+    s_.page_setup.paperSize = s_.PAPERSIZE_A4
+    s_.page_setup.fitToWidth = 1
+    s_.page_setup.fitToHeight = 0
+    s_.sheet_properties.pageSetUpPr.fitToPage = True
+    s_.print_options.horizontalCentered = True
+    s_.page_margins.left = s_.page_margins.right = 0.3
+    s_.page_margins.top = s_.page_margins.bottom = 0.4
+    s_.oddFooter.center.text = f"{name}  ,  page &P of &N"
+    s_.oddFooter.center.size = 8
+    s_.oddFooter.center.color = "808080"
+wb["The papers"].print_title_rows = "4:5"
+wb["7ad ba3ed"].print_title_rows = "5:5"
+wb["Tools"].print_title_rows = "5:5"
+
 # ---------------------------------------------------------------- save
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "PAPERS_TABLE.xlsx")
 wb.save(out)
