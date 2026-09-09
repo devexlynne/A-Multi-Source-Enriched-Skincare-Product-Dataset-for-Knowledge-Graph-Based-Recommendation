@@ -125,6 +125,31 @@ ANTIOXIDANT = ["TOCOPHEROL", "ASCORBIC ACID", "ASCORBYL", "FERULIC ACID",
 SOOTHING = ["CENTELLA", "MADECASSOSIDE", "ASIATICOSIDE", "ALLANTOIN",
  "BISABOLOL", "ALOE", "CHAMOMILLA", "GLYCYRRHIZA", "BETA-GLUCAN", "PANTHENOL"]
 
+# --- what people actually ask for -------------------------------------------
+# "mature skin" is the trade word for skin losing collagen and lipids: fine
+# lines, slower turnover, more dryness. These are the actives that address it.
+MATURE_ACTIVES = ["RETINOL", "RETINYL", "RETINAL", "PEPTIDE", "MATRIXYL",
+ "ASCORBIC ACID", "ASCORBYL", "COENZYME", "UBIQUINONE", "NIACINAMIDE",
+ "BAKUCHIOL", "GLYCOLIC ACID", "LACTIC ACID", "ADENOSINE", "GROWTH FACTOR",
+ "EGF", "RESVERATROL", "PHYTONADIONE"]
+# barrier repair: the three lipids skin makes itself, plus the classic soothers
+BARRIER_REPAIR = ["CERAMIDE", "CHOLESTEROL", "PHYTOSPHINGOSINE",
+ "SPHINGOLIPID", "NIACINAMIDE", "PANTHENOL", "CENTELLA", "MADECASSOSIDE",
+ "SQUALANE", "LINOLEIC ACID", "BETA-GLUCAN", "ALLANTOIN"]
+# ingredients that speed cell turnover, so skin can look worse for 4 to 8 weeks
+PURGING = ["RETINOL", "RETINYL", "RETINAL", "TRETINOIN", "ADAPALENE",
+ "SALICYLIC ACID", "GLYCOLIC ACID", "LACTIC ACID", "MANDELIC ACID",
+ "BENZOYL PEROXIDE", "AZELAIC ACID"]
+# night only: unstable in light, or increases sun sensitivity
+PM_ONLY = ["RETINOL", "RETINYL", "RETINAL", "TRETINOIN", "ADAPALENE",
+ "BENZOYL PEROXIDE", "HYDROQUINONE"]
+FRAGRANCE = [r"\bPARFUM\b", r"\bFRAGRANCE\b", "AROMA", "LINALOOL", "LIMONENE",
+ "CITRONELLOL", "GERANIOL", "EUGENOL", "COUMARIN", "CINNAMAL",
+ "BENZYL ALCOHOL", "HEXYL CINNAMAL", "BUTYLPHENYL METHYLPROPIONAL"]
+ESSENTIAL_OIL = ["ESSENTIAL OIL", "LAVANDULA", "MENTHA", "EUCALYPTUS",
+ "ROSMARINUS", "CITRUS.*OIL", "PELARGONIUM", "CANANGA", "MELALEUCA",
+ "POGOSTEMON", "SANTALUM"]
+
 OCCLUSIVE = ["PETROLATUM", "MINERAL OIL", "PARAFFINUM", "DIMETHICONE",
              "LANOLIN", "SHEA BUTTER", "BUTYROSPERMUM", "CERA ALBA"]
 HUMECTANT = ["GLYCERIN", "HYALURONIC", "SODIUM HYALURONATE",
@@ -177,17 +202,33 @@ def split_inci(text):
     return [x.replace("\x00", ",").strip(" .*") for x in s.split(",") if x.strip()]
 
 
+_COMPILED = {}
+
+
+def _rx(patterns):
+    """Compile a pattern list once into a single alternation, then cache it.
+
+    Without this the script recompiles every pattern for every ingredient of
+    every product, which is roughly 40 million regex compiles and takes
+    minutes. With it the whole run is a few seconds.
+    """
+    key = id(patterns)
+    if key not in _COMPILED:
+        parts = [p if ("\\" in p or "-" in p) else r"\b" + re.escape(p)
+                 for p in patterns]
+        _COMPILED[key] = re.compile("|".join(parts))
+    return _COMPILED[key]
+
+
 def matches(patterns, items, exclude=()):
     """Ingredients that matched, so every flag can show its evidence."""
+    rx = _rx(patterns)
     found = []
     for ing in items:
-        if any(e in ing for e in exclude):
+        if exclude and any(e in ing for e in exclude):
             continue
-        for p in patterns:
-            rx = p if ("\\" in p or "-" in p) else r"\b" + re.escape(p)
-            if re.search(rx, ing):
-                found.append(ing)
-                break
+        if rx.search(ing):
+            found.append(ing)
     return found
 
 
@@ -227,13 +268,20 @@ FLAGS = [
  ("contains_peptide",         None,                       PEPTIDE, ()),
  ("contains_antioxidant",     None,                       ANTIOXIDANT, ()),
  ("contains_soothing",        None,                       SOOTHING, ()),
+ ("suits_mature_skin",       "mature_skin_evidence",     MATURE_ACTIVES, ()),
+ ("supports_barrier_repair", "barrier_repair_evidence",  BARRIER_REPAIR, ()),
+ ("may_cause_purging",       "purging_evidence",         PURGING, ()),
+ ("contains_fragrance",      "fragrance_evidence",       FRAGRANCE, ()),
+ ("contains_essential_oil",  None,                       ESSENTIAL_OIL, ()),
 ]
 
 DESCRIPTIVE = ["preservative_system", "formula_base", "moisturiser_type",
                "sunscreen_filter_type", "actives_present",
                "lead_active_position", "stated_concentration",
                "halal_candidate", "routine_step", "body_site",
-               "regional_style", "price_band_lebanon"]
+               "regional_style", "price_band_lebanon",
+               "use_time", "do_not_layer_with", "strength_level",
+               "texture", "white_cast_risk"]
 
 NEW_COLS = []
 for col, ev, _, _ in FLAGS:
@@ -296,6 +344,50 @@ def derive(row):
         no_alc = not any_match(DRYING_ALCOHOL, ing, FATTY_ALCOHOL)
         no_ani = not any_match(ANIMAL, ing, NOT_ANIMAL)
         out["halal_candidate"] = "candidate" if (no_alc and no_ani) else "no"
+
+        # ---- when to use it -------------------------------------------
+        pm = any_match(PM_ONLY, ing)
+        exfo = any_match(AHA, ing) or any_match(BHA_ACID, ing)
+        uv = mineral or chemical
+        out["use_time"] = ("night only" if pm else
+                           "morning" if uv else
+                           "night preferred" if exfo else "morning or night")
+
+        # ---- what not to layer it with --------------------------------
+        clash = []
+        if any_match(RETINOID, ing):
+            clash.append("acids (AHA, BHA) and vitamin C, on the same night")
+        if exfo and not any_match(RETINOID, ing):
+            clash.append("retinoids and other acids, same session")
+        if any_match(["ASCORBIC ACID"], ing):
+            clash.append("benzoyl peroxide, which oxidises it")
+        out["do_not_layer_with"] = "; ".join(clash)
+
+        # ---- how strong is it -----------------------------------------
+        strong = any_match(RETINOID, ing) or exfo
+        pos = lead_pos if lead else 10 ** 6
+        out["strength_level"] = ("advanced, patch test first" if strong and pos <= 8
+                                 else "intermediate" if strong or present
+                                 else "gentle")
+
+        # ---- white cast, mineral filters that are not nano -------------
+        if mineral and not any_match(NANO, ing):
+            out["white_cast_risk"] = "possible, mineral filter not marked nano"
+        elif mineral:
+            out["white_cast_risk"] = "lower, nano mineral filter"
+
+    # ---- texture, from the product name ------------------------------
+    nm = (row.get("name") or "").lower()
+    for word, label in [("balm", "balm"), ("butter", "balm"), ("oil", "oil"),
+                        ("gel", "gel"), ("foam", "foam"), ("mousse", "foam"),
+                        ("milk", "milk"), ("lotion", "lotion"),
+                        ("mist", "mist"), ("spray", "mist"),
+                        ("water", "water"), ("essence", "essence"),
+                        ("stick", "stick"), ("powder", "powder"),
+                        ("cream", "cream"), ("serum", "serum")]:
+        if word in nm:
+            out["texture"] = label
+            break
 
     m = PCT.search(row.get("name") or "")
     if m and m.group(1) not in ("100",):
