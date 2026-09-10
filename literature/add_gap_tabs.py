@@ -24,7 +24,20 @@ from tools_extra import TOOLS_COLS, TOOLS
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC  = os.path.join(HERE, "PAPERS_TABLE.xlsx")          # her edited file, read only
-OUT  = os.path.join(HERE, "PAPERS_TABLE_v2.xlsx")       # what this writes
+BASE = os.path.join(HERE, "PAPERS_TABLE_clean")          # what this writes
+
+
+def free_name():
+    """Excel locks a file while it is open, so fall back to the next number."""
+    for n in ["", "_2", "_3", "_4", "_5"]:
+        path = f"{BASE}{n}.xlsx"
+        try:
+            with open(path, "ab"):
+                pass
+            return path
+        except PermissionError:
+            continue
+    raise SystemExit("close the open workbooks first")
 
 BLACK = "000000"
 GREY  = "666666"
@@ -287,6 +300,76 @@ def build_abesova(wb):
     return ws
 
 
+
+# --------------------------------------------------- restyle the older tabs
+# Her text is not touched. Only fonts, fills and borders change.
+
+DARKS = {"FF2E2A25", "FFE8A33D", "FF1F6F6B", "FF6B4E9B", "FF8C4A62", "FFA6612F"}
+GREENS = {"FFEDF5F3"}          # the rows she marked as the important ones
+
+
+def _fill(c):
+    try:
+        return c.fill.fgColor.rgb
+    except Exception:
+        return None
+
+
+def restyle_tab(ws, title_row=1, sub_row=2):
+    """Strip the colours off a tab that is already written, keeping the words,
+    the merges, the widths and the row heights."""
+    ncols = ws.max_column
+    spans = {}                       # row -> widest merge on that row
+    for m in ws.merged_cells.ranges:
+        if m.min_row == m.max_row:
+            spans[m.min_row] = max(spans.get(m.min_row, 0), m.max_col - m.min_col + 1)
+
+    for i in range(1, ws.max_row + 1):
+        cells = [ws.cell(row=i, column=j) for j in range(1, ncols + 1)]
+        darks = sum(1 for c in cells if _fill(c) in DARKS)
+        wide  = spans.get(i, 1) >= max(3, int(ncols * 0.6))
+        marked = _fill(cells[0]) in GREENS
+
+        if i == title_row:
+            kind = "title"
+        elif i == sub_row and cells[0].value and darks == 0:
+            kind = "sub"
+        elif wide and darks:
+            kind = "band"
+        elif darks >= 3:
+            kind = "header"
+        else:
+            kind = "data"
+
+        for c in cells:
+            keep = c.alignment
+            if kind == "title":
+                c.font = Font(name=FONT, size=13, bold=True, color=BLACK)
+                c.fill = PatternFill(fill_type=None)
+            elif kind == "sub":
+                c.font = Font(name=FONT, size=10, color=GREY)
+                c.fill = PatternFill(fill_type=None)
+            elif kind == "band":
+                c.font = Font(name=FONT, size=11, bold=True, color=BLACK)
+                c.fill = PatternFill(fill_type=None)
+                c.border = above
+            elif kind == "header":
+                c.font = Font(name=FONT, size=10, bold=True, color=BLACK)
+                c.fill = PatternFill("solid", fgColor=HEAD)
+                c.border = under
+            else:
+                c.font = Font(name=FONT, size=10, bold=marked, color=BLACK)
+                c.fill = PatternFill(fill_type=None)
+                if c.value is not None or any(x.value is not None for x in cells):
+                    c.border = under
+            c.alignment = Alignment(horizontal=keep.horizontal,
+                                    vertical=keep.vertical or "top",
+                                    wrap_text=keep.wrap_text,
+                                    indent=keep.indent or 0)
+    ws.sheet_view.showGridLines = False
+    return ws
+
+
 # ------------------------------------------------------------ the Tools tab
 def build_tools(wb):
     """Rebuild the Tools tab from scratch. Short cells, and a column naming
@@ -332,10 +415,14 @@ def main():
     build_reasoning(wb)
     build_abesova(wb)
     build_tools(wb)
+    restyle_tab(wb["The papers"], title_row=1, sub_row=2)
+    restyle_tab(wb["7ad ba3ed"],  title_row=1, sub_row=2)
+    restyle_tab(wb["My ontology"], title_row=1, sub_row=2)
     order = before + [s for s in wb.sheetnames if s not in before]
     wb._sheets = [wb[s] for s in order]
-    wb.save(OUT)
-    print("saved:", OUT)
+    out = free_name()
+    wb.save(out)
+    print("saved:", out)
     print("tabs :", wb.sheetnames)
 
 
