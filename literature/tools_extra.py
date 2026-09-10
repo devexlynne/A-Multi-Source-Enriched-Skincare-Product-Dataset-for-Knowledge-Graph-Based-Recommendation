@@ -13,7 +13,7 @@ Same 6 columns as the tab already has:
 
 EXTRA = [
 
- ("H", "  EDITORS INSTEAD OF PROTEGE   (my supervisor asked. 5 of my 28 papers used no Protege at all)"),
+ ("H", "Editors instead of Protege. My supervisor asked. Five of my 28 papers used no Protege at all."),
 
  ("WebProtege",
   "Protege in a browser, multi-user",
@@ -30,7 +30,7 @@ EXTRA = [
   "predicate, it writes the RDF.",
   "graphdb.ontotext.com",
   "NO",
-  "ABESOVA USED THIS INSTEAD OF PROTEGE. It works, but the mapping is trapped inside GraphDB. "
+  "Abesova used this instead of Protege. It works, but the mapping is trapped inside GraphDB. "
   "I cannot put it in an appendix or re-run it from a script. Morph-KGC does the same job as "
   "a file I can publish."),
 
@@ -95,7 +95,7 @@ EXTRA = [
   "Store the graph, query it over HTTP. No editor, just the server.",
   "jena.apache.org/documentation/fuseki2",
   "NO",
-  "BIT-TECH 2025 USED THIS INSTEAD OF PROTEGE, with no editor at all. Its reasoning is weaker "
+  "bit-Tech 2025 used this instead of Protege, with no editor at all. Its reasoning is weaker "
   "than GraphDB, but its SHACL engine is the fastest."),
 
  ("R2RML / RML mapping files",
@@ -103,10 +103,10 @@ EXTRA = [
   "You never open an editor. The mapping file decides the shape of the graph.",
   "rml.io",
   "YES",
-  "TOXIN KG 2025 WORKED THIS WAY. It is also how my pipeline works, so I should say so plainly: "
+  "TOXIN KG 2025 worked this way. It is also how my pipeline works, so I should say so plainly: "
   "my ontology is built by a script, not by clicking."),
 
- ("H", "  REASONING AND RULES   (five ways to reason. See the 'Reasoning + SHACL' tab)"),
+ ("H", "Reasoning and rules. Five ways to reason. See the Reasoning + SHACL tab."),
 
  ("RDFS entailment",
   "The cheapest reasoning. Subclass and domain/range only",
@@ -129,14 +129,14 @@ EXTRA = [
   "w3.org/TR/shacl",
   "YES",
   "OWL cannot do this. OWL would decide the two prices are the same thing rather than "
-  "complain. NOT ONE of my 28 papers uses SHACL."),
+  "complain. Not one of my 28 papers uses SHACL."),
 
  ("SHACL-AF  sh:TripleRule",
   "A rule in the graph that adds a new triple",
-  "IF a product has 3 or more barrier lipids THEN it is a BarrierRepairProduct.",
+  "If a product has three or more barrier lipids, it is a BarrierRepairProduct.",
   "w3.org/TR/shacl-af",
   "YES",
-  "Same result as a defined class but easier to read, and it can infer ANY triple. OWL can "
+  "Same result as a defined class but easier to read, and it can infer any triple. OWL can "
   "only ever infer types and sameAs."),
 
  ("SHACL-AF  sh:SPARQLRule",
@@ -168,7 +168,7 @@ EXTRA = [
   "than Turtle.",
   "jena.apache.org/documentation/shacl",
   "MAYBE",
-  "Benchmarked around 4x faster than pySHACL. Only matters if pySHACL gets slow."),
+  "Benchmarked around four times faster than pySHACL. Only matters if pySHACL gets slow."),
 
  ("TopBraid SHACL API",
   "The reference implementation",
