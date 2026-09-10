@@ -20,7 +20,7 @@ from gap_data import (GAP_COLS, GAP, REASONING_INTRO, REASONING_COLS, REASONING,
                       SHACL_CODE, ABESOVA_FACTS, ABESOVA_STEPS, ABESOVA_CLASSES,
                       ABESOVA_PROPS, ABESOVA_HONEST, ABESOVA_LIMITATION,
                       ABESOVA_PIPELINE, ABESOVA_MAIN_IDEA, GAP_SUMMARY, SHACL_SENTENCE)
-from tools_extra import EXTRA
+from tools_extra import TOOLS_COLS, TOOLS
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC  = os.path.join(HERE, "PAPERS_TABLE.xlsx")          # her edited file, read only
@@ -287,30 +287,41 @@ def build_abesova(wb):
     return ws
 
 
-# ----------------------------------------------------------- append to Tools
-def append_tools(wb):
-    ws = wb["Tools"]
-    r = ws.max_row + 2
-    for row in EXTRA:
+# ------------------------------------------------------------ the Tools tab
+def build_tools(wb):
+    """Rebuild the Tools tab from scratch. Short cells, and a column naming
+    which paper used each tool."""
+    if "Tools" in wb.sheetnames:
+        del wb["Tools"]
+    ws = wb.create_sheet("Tools")
+    NC = len(TOOLS_COLS)
+    head_block(ws, NC, "Tools",
+               "One row per tool. 'Used by' names the paper that used it. "
+               "A dash means nobody in my review used it.")
+    table_head(ws, 4, TOOLS_COLS)
+
+    r = 5
+    for row in TOOLS:
         if row[0] == "H":
-            ws.merge_cells(start_row=r, start_column=2, end_row=r, end_column=7)
-            c = ws.cell(row=r, column=2, value=row[1])
-            c.font = Font(name=FONT, size=11, bold=True, color=BLACK)
-            c.border = above
-            c.alignment = Alignment(vertical="center")
-            ws.row_dimensions[r].height = 24
+            section(ws, r, NC, row[1])
             r += 1
             continue
-        for i, val in enumerate(row, start=2):
+        for i, val in enumerate(row, start=1):
             c = ws.cell(row=r, column=i, value=val)
-            c.font = Font(name=FONT, size=10, bold=(i == 2), color=BLACK)
+            c.font = Font(name=FONT, size=10, bold=(i == 1),
+                          color=GREY if i == 7 else BLACK)
             c.alignment = Alignment(
-                horizontal="center" if i == 6 else "general",
+                horizontal="center" if i == 5 else "general",
                 vertical="top", wrap_text=True)
             c.border = under
-        ws.row_dimensions[r].height = max(est_height(row[2], 44),
-                                          est_height(row[5], 52))
+        ws.row_dimensions[r].height = max(
+            est_height(row[1], 32), est_height(row[3], 40),
+            est_height(row[5], 38), est_height(row[2], 20))
         r += 1
+
+    ws.freeze_panes = "B5"
+    ws.sheet_view.showGridLines = False
+    ws.sheet_view.zoomScale = 90
     return ws
 
 
@@ -320,7 +331,7 @@ def main():
     build_gap(wb)
     build_reasoning(wb)
     build_abesova(wb)
-    append_tools(wb)
+    build_tools(wb)
     order = before + [s for s in wb.sheetnames if s not in before]
     wb._sheets = [wb[s] for s in order]
     wb.save(OUT)
